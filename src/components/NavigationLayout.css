@@ -1,0 +1,21 @@
+.header-bg.flex {
+    background-image: linear-gradient(to right, #104b7d 16%, #f3f4f5 10%);
+
+}
+aside.w-64.border-r.border-border.bg-card {
+    background-color: #104b7d;
+    border: transparent;
+    height: 783px;
+    background-image: linear-gradient(#104b7d 10%, #104b7d 50%, #99BFEC 90%);
+}
+.bg-blue-500 {
+    --tw-bg-opacity: 1;
+   background-color: rgb(85 134 175) !important;
+}
+.bg-blue-300{
+    background-color: rgb(116, 158, 193);
+}
+
+.bg-primary {
+    background-color: hsl(207.52deg 77.3% 27.65%) !important;
+}
