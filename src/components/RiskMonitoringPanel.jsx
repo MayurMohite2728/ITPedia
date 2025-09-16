@@ -12,25 +12,8 @@ import {
   Bell
 } from "lucide-react";
 
-interface RiskAlert {
-  id: string;
-  type: "vulnerability" | "lifecycle" | "compliance";
-  severity: "critical" | "high" | "medium" | "low";
-  title: string;
-  description: string;
-  affectedAssets: number;
-  stakeholders: string[];
-  source: string;
-  timestamp: string;
-  status: "new" | "acknowledged" | "in-progress" | "resolved";
-}
-
-interface RiskMonitoringPanelProps {
-  alerts?: RiskAlert[];
-}
-
-export const RiskMonitoringPanel = ({ alerts = [] }: RiskMonitoringPanelProps) => {
-  const mockAlerts: RiskAlert[] = [
+export const RiskMonitoringPanel = ({ alerts = [] }) => {
+  const mockAlerts = [
     {
       id: "1",
       type: "vulnerability",
@@ -69,7 +52,7 @@ export const RiskMonitoringPanel = ({ alerts = [] }: RiskMonitoringPanelProps) =
     },
   ];
 
-  const getAlertIcon = (type: string) => {
+  const getAlertIcon = (type) => {
     switch (type) {
       case "vulnerability":
         return <Shield className="h-4 w-4" />;
@@ -82,7 +65,7 @@ export const RiskMonitoringPanel = ({ alerts = [] }: RiskMonitoringPanelProps) =
     }
   };
 
-  const getSeverityColor = (severity: string) => {
+  const getSeverityColor = (severity) => {
     switch (severity) {
       case "critical":
         return "text-destructive bg-destructive/10 border-destructive/20";

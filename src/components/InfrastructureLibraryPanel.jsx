@@ -22,36 +22,15 @@ import {
   Network
 } from "lucide-react";
 
-interface InfrastructureNormalization {
-  id: string;
-  originalName: string;
-  normalizedName: string;
-  source: string;
-  status: "normalized" | "pending" | "error" | "manual-review";
-  type: "server" | "database" | "network" | "storage" | "virtualization";
-  lifecycle: {
-    generalAvailability?: string;
-    endOfSupport?: string;
-    endOfLife?: string;
-  };
-  securityStatus: "secure" | "vulnerable" | "unknown";
-  complianceStatus: "compliant" | "non-compliant" | "unknown";
-  lastUpdated: string;
-}
-
-interface InfrastructureLibraryPanelProps {
-  infrastructure?: InfrastructureNormalization[];
-}
-
-export const InfrastructureLibraryPanel = ({ infrastructure = [] }: InfrastructureLibraryPanelProps) => {
+export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
   const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
-  const [selectedInfrastructure, setSelectedInfrastructure] = useState<InfrastructureNormalization | null>(null);
+  const [selectedInfrastructure, setSelectedInfrastructure] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSyncingAll, setIsSyncingAll] = useState(false);
   const { toast } = useToast();
 
-  const mockInfrastructure: InfrastructureNormalization[] = [
+  const mockInfrastructure = [
     {
       id: "1",
       originalName: "HP ProLiant DL380 Gen10",
@@ -122,48 +101,35 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }: Infrastructu
   const normalizedCount = displayInfrastructure.filter(i => i.status === "normalized").length;
   const normalizationRate = (normalizedCount / displayInfrastructure.length) * 100;
 
-  const getTypeIcon = (type: string) => {
+  const getTypeIcon = (type) => {
     switch (type) {
-      case "server":
-        return <Server className="h-4 w-4" />;
-      case "database":
-        return <HardDrive className="h-4 w-4" />;
-      case "network":
-        return <Network className="h-4 w-4" />;
-      case "storage":
-        return <HardDrive className="h-4 w-4" />;
-      case "virtualization":
-        return <Server className="h-4 w-4" />;
-      default:
-        return <Server className="h-4 w-4" />;
+      case "server": return <Server className="h-4 w-4" />;
+      case "database": return <HardDrive className="h-4 w-4" />;
+      case "network": return <Network className="h-4 w-4" />;
+      case "storage": return <HardDrive className="h-4 w-4" />;
+      case "virtualization": return <Server className="h-4 w-4" />;
+      default: return <Server className="h-4 w-4" />;
     }
   };
 
-  const getSecurityIcon = (status: string) => {
+  const getSecurityIcon = (status) => {
     switch (status) {
-      case "secure":
-        return <Shield className="h-4 w-4 text-success" />;
-      case "vulnerable":
-        return <AlertCircle className="h-4 w-4 text-destructive" />;
-      default:
-        return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
+      case "secure": return <Shield className="h-4 w-4 text-success" />;
+      case "vulnerable": return <AlertCircle className="h-4 w-4 text-destructive" />;
+      default: return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status) => {
     switch (status) {
-      case "normalized":
-        return <CheckCircle className="h-4 w-4 text-success" />;
-      case "error":
-        return <AlertCircle className="h-4 w-4 text-destructive" />;
-      case "manual-review":
-        return <AlertCircle className="h-4 w-4 text-warning" />;
-      default:
-        return <RefreshCw className="h-4 w-4 text-muted-foreground" />;
+      case "normalized": return <CheckCircle className="h-4 w-4 text-success" />;
+      case "error": return <AlertCircle className="h-4 w-4 text-destructive" />;
+      case "manual-review": return <AlertCircle className="h-4 w-4 text-warning" />;
+      default: return <RefreshCw className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
-  const handleManualReview = (item: InfrastructureNormalization) => {
+  const handleManualReview = (item) => {
     setSelectedInfrastructure(item);
     setIsReviewDialogOpen(true);
   };
@@ -172,7 +138,7 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }: Infrastructu
     setIsDetailsDialogOpen(true);
   };
 
-  const handleViewItemDetails = (item: InfrastructureNormalization) => {
+  const handleViewItemDetails = (item) => {
     setSelectedInfrastructure(item);
     setIsDetailsDialogOpen(true);
   };
@@ -181,16 +147,9 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }: Infrastructu
     setIsSyncingAll(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
-      toast({
-        title: "Sync Complete",
-        description: "All infrastructure components have been synchronized with IT-Pedia.",
-      });
+      toast({ title: "Sync Complete", description: "All infrastructure components have been synchronized with IT-Pedia." });
     } catch (error) {
-      toast({
-        title: "Sync Failed",
-        description: "Failed to synchronize with IT-Pedia. Please try again.",
-        variant: "destructive",
-      });
+      toast({ title: "Sync Failed", description: "Failed to synchronize with IT-Pedia. Please try again.", variant: "destructive" });
     } finally {
       setIsSyncingAll(false);
     }
@@ -198,41 +157,26 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }: Infrastructu
 
   const handleSaveManualReview = async () => {
     if (!selectedInfrastructure) return;
-    
     setIsLoading(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 1500));
-      toast({
-        title: "Infrastructure Updated",
-        description: `${selectedInfrastructure.normalizedName} has been updated and synced with IT-Pedia.`,
-      });
+      toast({ title: "Infrastructure Updated", description: `${selectedInfrastructure.normalizedName} has been updated and synced with IT-Pedia.` });
       setIsReviewDialogOpen(false);
       setSelectedInfrastructure(null);
     } catch (error) {
-      toast({
-        title: "Update Failed",
-        description: "Failed to update infrastructure. Please try again.",
-        variant: "destructive",
-      });
+      toast({ title: "Update Failed", description: "Failed to update infrastructure. Please try again.", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSyncIndividual = async (itemId: string) => {
+  const handleSyncIndividual = async (itemId) => {
     setIsLoading(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
-      toast({
-        title: "Infrastructure Synced",
-        description: "Infrastructure component has been synchronized with IT-Pedia.",
-      });
+      toast({ title: "Infrastructure Synced", description: "Infrastructure component has been synchronized with IT-Pedia." });
     } catch (error) {
-      toast({
-        title: "Sync Failed",
-        description: "Failed to sync infrastructure. Please try again.",
-        variant: "destructive",
-      });
+      toast({ title: "Sync Failed", description: "Failed to sync infrastructure. Please try again.", variant: "destructive" });
     } finally {
       setIsLoading(false);
     }
@@ -252,7 +196,6 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }: Infrastructu
           </div>
           <Progress value={normalizationRate} className="mt-2" />
         </Card>
-
         <Card className="p-4 bg-gradient-card shadow-card">
           <div className="flex items-center justify-between">
             <div>
@@ -262,7 +205,6 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }: Infrastructu
             <Server className="h-8 w-8 text-primary" />
           </div>
         </Card>
-
         <Card className="p-4 bg-gradient-card shadow-card">
           <div className="flex items-center justify-between">
             <div>
@@ -274,7 +216,6 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }: Infrastructu
             <AlertCircle className="h-8 w-8 text-destructive" />
           </div>
         </Card>
-
         <Card className="p-4 bg-gradient-card shadow-card">
           <div className="flex items-center justify-between">
             <div>
@@ -288,8 +229,9 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }: Infrastructu
         </Card>
       </div>
 
-      {/* Infrastructure Normalization Table */}
-      <Card className="p-6 bg-gradient-card shadow-card">
+      {/* Infrastructure Table & Dialogs */}
+      {/* ... The rest remains mostly the same JSX code without TypeScript types ... */}
+    <Card className="p-6 bg-gradient-card shadow-card">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h3 className="text-lg font-semibold">Golden Infrastructure Library</h3>
@@ -486,26 +428,27 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }: Infrastructu
 
               <div>
                 <Label htmlFor="type">Infrastructure Type</Label>
-                <Select
-                  value={selectedInfrastructure.type}
-                  onValueChange={(value: "server" | "database" | "network" | "storage" | "virtualization") => 
-                    setSelectedInfrastructure({
-                      ...selectedInfrastructure,
-                      type: value
-                    })
-                  }
-                >
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="server">Server</SelectItem>
-                    <SelectItem value="database">Database</SelectItem>
-                    <SelectItem value="network">Network</SelectItem>
-                    <SelectItem value="storage">Storage</SelectItem>
-                    <SelectItem value="virtualization">Virtualization</SelectItem>
-                  </SelectContent>
-                </Select>
+               <Select
+  value={selectedInfrastructure.type}
+  onValueChange={(value) =>
+    setSelectedInfrastructure({
+      ...selectedInfrastructure,
+      type: value,
+    })
+  }
+>
+  <SelectTrigger>
+    <SelectValue />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="server">Server</SelectItem>
+    <SelectItem value="database">Database</SelectItem>
+    <SelectItem value="network">Network</SelectItem>
+    <SelectItem value="storage">Storage</SelectItem>
+    <SelectItem value="virtualization">Virtualization</SelectItem>
+  </SelectContent>
+</Select>
+
               </div>
 
               <div className="grid grid-cols-3 gap-4">
@@ -559,45 +502,47 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }: Infrastructu
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="security-status">Security Status</Label>
-                  <Select
-                    value={selectedInfrastructure.securityStatus}
-                    onValueChange={(value: "secure" | "vulnerable" | "unknown") => 
-                      setSelectedInfrastructure({
-                        ...selectedInfrastructure,
-                        securityStatus: value
-                      })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="secure">Secure</SelectItem>
-                      <SelectItem value="vulnerable">Vulnerable</SelectItem>
-                      <SelectItem value="unknown">Unknown</SelectItem>
-                    </SelectContent>
-                  </Select>
+                 <Select
+  value={selectedInfrastructure.securityStatus}
+  onValueChange={(value) =>
+    setSelectedInfrastructure({
+      ...selectedInfrastructure,
+      securityStatus: value,
+    })
+  }
+>
+  <SelectTrigger>
+    <SelectValue />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="secure">Secure</SelectItem>
+    <SelectItem value="vulnerable">Vulnerable</SelectItem>
+    <SelectItem value="unknown">Unknown</SelectItem>
+  </SelectContent>
+</Select>
+
                 </div>
                 <div>
                   <Label htmlFor="compliance-status">Compliance Status</Label>
-                  <Select
-                    value={selectedInfrastructure.complianceStatus}
-                    onValueChange={(value: "compliant" | "non-compliant" | "unknown") => 
-                      setSelectedInfrastructure({
-                        ...selectedInfrastructure,
-                        complianceStatus: value
-                      })
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="compliant">Compliant</SelectItem>
-                      <SelectItem value="non-compliant">Non-Compliant</SelectItem>
-                      <SelectItem value="unknown">Unknown</SelectItem>
-                    </SelectContent>
-                  </Select>
+                 <Select
+  value={selectedInfrastructure.complianceStatus}
+  onValueChange={(value) =>
+    setSelectedInfrastructure({
+      ...selectedInfrastructure,
+      complianceStatus: value,
+    })
+  }
+>
+  <SelectTrigger>
+    <SelectValue />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="compliant">Compliant</SelectItem>
+    <SelectItem value="non-compliant">Non-Compliant</SelectItem>
+    <SelectItem value="unknown">Unknown</SelectItem>
+  </SelectContent>
+</Select>
+
                 </div>
               </div>
             </div>
@@ -783,6 +728,7 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }: Infrastructu
           )}
         </DialogContent>
       </Dialog>
+    
     </div>
   );
 };

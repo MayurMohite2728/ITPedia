@@ -19,3 +19,32 @@ aside.w-64.border-r.border-border.bg-card {
 .bg-primary {
     background-color: hsl(207.52deg 77.3% 27.65%) !important;
 }
+header {
+    background-color: #fff!important;
+}
+main {
+    background-color: #f2f1f1;
+}
+input {
+    background-color: #fff !important;
+}
+.btn-default-bg-color{
+    background-color: #fff !important;
+}
+.bg-background {
+    background-color: hsl(var(--background, 0 0% 100%));
+    background-color: #f2f1f1!important;
+}
+.bg-card{
+    background-color: #ffffff!important;
+}
+.bg-background[data-state="active"] {
+    background-color: #ffffff;
+}
+button[data-state="active"] {
+  background-color: #2563eb; /* blue */
+  color: white;
+}
+.bg-blue-250{
+    background-color:#5586af;
+}

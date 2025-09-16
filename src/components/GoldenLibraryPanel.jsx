@@ -20,33 +20,15 @@ import {
   Edit3
 } from "lucide-react";
 
-interface ProductNormalization {
-  id: string;
-  originalName: string;
-  normalizedName: string;
-  source: string;
-  status: "normalized" | "pending" | "error" | "manual-review";
-  lifecycle: {
-    generalAvailability?: string;
-    endOfSupport?: string;
-    endOfLife?: string;
-  };
-  securityStatus: "secure" | "vulnerable" | "unknown";
-  lastUpdated: string;
-}
-
-interface GoldenLibraryPanelProps {
-  products?: ProductNormalization[];
-}
-
-export const GoldenLibraryPanel = ({ products = [] }: GoldenLibraryPanelProps) => {
+export const GoldenLibraryPanel = ({ products = [] }) => {
   const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState<ProductNormalization | null>(null);
+  const [selectedProduct, setSelectedProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSyncingAll, setIsSyncingAll] = useState(false);
   const { toast } = useToast();
-  const mockProducts: ProductNormalization[] = [
+
+  const mockProducts = [
     {
       id: "1",
       originalName: "Apache Tomcat v9.0",
@@ -95,7 +77,7 @@ export const GoldenLibraryPanel = ({ products = [] }: GoldenLibraryPanelProps) =
   const normalizedCount = displayProducts.filter(p => p.status === "normalized").length;
   const normalizationRate = (normalizedCount / displayProducts.length) * 100;
 
-  const getSecurityIcon = (status: string) => {
+  const getSecurityIcon = (status) => {
     switch (status) {
       case "secure":
         return <Shield className="h-4 w-4 text-success" />;
@@ -106,7 +88,7 @@ export const GoldenLibraryPanel = ({ products = [] }: GoldenLibraryPanelProps) =
     }
   };
 
-  const getStatusIcon = (status: string) => {
+  const getStatusIcon = (status) => {
     switch (status) {
       case "normalized":
         return <CheckCircle className="h-4 w-4 text-success" />;
@@ -119,7 +101,7 @@ export const GoldenLibraryPanel = ({ products = [] }: GoldenLibraryPanelProps) =
     }
   };
 
-  const handleManualReview = (product: ProductNormalization) => {
+  const handleManualReview = (product) => {
     setSelectedProduct(product);
     setIsReviewDialogOpen(true);
   };
@@ -128,7 +110,7 @@ export const GoldenLibraryPanel = ({ products = [] }: GoldenLibraryPanelProps) =
     setIsDetailsDialogOpen(true);
   };
 
-  const handleViewProductDetails = (product: ProductNormalization) => {
+  const handleViewProductDetails = (product) => {
     setSelectedProduct(product);
     setIsDetailsDialogOpen(true);
   };
@@ -136,7 +118,6 @@ export const GoldenLibraryPanel = ({ products = [] }: GoldenLibraryPanelProps) =
   const handleSyncAll = async () => {
     setIsSyncingAll(true);
     try {
-      // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 2000));
       toast({
         title: "Sync Complete",
@@ -158,7 +139,6 @@ export const GoldenLibraryPanel = ({ products = [] }: GoldenLibraryPanelProps) =
     
     setIsLoading(true);
     try {
-      // Simulate API call to save changes and sync with provider
       await new Promise(resolve => setTimeout(resolve, 1500));
       toast({
         title: "Product Updated",
@@ -177,7 +157,7 @@ export const GoldenLibraryPanel = ({ products = [] }: GoldenLibraryPanelProps) =
     }
   };
 
-  const handleSyncIndividual = async (productId: string) => {
+  const handleSyncIndividual = async (productId) => {
     setIsLoading(true);
     try {
       await new Promise(resolve => setTimeout(resolve, 1000));
@@ -467,7 +447,7 @@ export const GoldenLibraryPanel = ({ products = [] }: GoldenLibraryPanelProps) =
                 <Label htmlFor="security-status">Security Status</Label>
                 <Select
                   value={selectedProduct.securityStatus}
-                  onValueChange={(value: "secure" | "vulnerable" | "unknown") => 
+                  onValueChange={(value) => 
                     setSelectedProduct({
                       ...selectedProduct,
                       securityStatus: value
@@ -522,7 +502,6 @@ export const GoldenLibraryPanel = ({ products = [] }: GoldenLibraryPanelProps) =
           </DialogHeader>
           
           {selectedProduct ? (
-            // Individual product details
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -592,7 +571,6 @@ export const GoldenLibraryPanel = ({ products = [] }: GoldenLibraryPanelProps) =
               </div>
             </div>
           ) : (
-            // Full library view
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <p className="text-muted-foreground">

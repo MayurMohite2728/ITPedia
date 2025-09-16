@@ -1,11 +1,6 @@
 import { cn } from "@/lib/utils";
 
-interface StatusBadgeProps {
-  status: "active" | "inactive" | "synced" | "pending" | "error" | "modified";
-  children?: React.ReactNode;
-}
-
-export const StatusBadge = ({ status, children }: StatusBadgeProps) => {
+export const StatusBadge = ({ status, children }) => {
   return (
     <span
       className={cn(

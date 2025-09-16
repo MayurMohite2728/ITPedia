@@ -26,7 +26,7 @@ import {
 
 const Index = () => {
   const [currentPage, setCurrentPage] = useState("dashboard");
-  const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const [viewMode, setViewMode] = useState("grid"); // ✅ removed TS type
 
   // Mock data - would come from your API
   const dashboardStats = [
@@ -73,7 +73,7 @@ const Index = () => {
   const integrations = [
     {
       name: "Avolution Abacus",
-      status: "connected" as const,
+      status: "connected",
       lastSync: "2024-01-20T14:30:00Z",
       url: "https://abacus.avolution.com",
       recordCount: 1247,
@@ -81,14 +81,14 @@ const Index = () => {
     },
     {
       name: "IT-Pedia MyProducts API",
-      status: "connected" as const,
+      status: "connected",
       lastSync: "2024-01-20T14:25:00Z",
       recordCount: 987,
       errorMessage: undefined,
     },
     {
       name: "IT-Pedia Event Stream",
-      status: "connected" as const,
+      status: "connected",
       lastSync: "2024-01-20T14:30:00Z",
       recordCount: 156,
       errorMessage: undefined,
@@ -101,8 +101,12 @@ const Index = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {dashboardStats.map((stat) => {
           const Icon = stat.icon;
-          const trendColor = stat.trend === "success" ? "text-success" : 
-                           stat.trend === "warning" ? "text-warning" : "text-primary";
+          const trendColor =
+            stat.trend === "success"
+              ? "text-success"
+              : stat.trend === "warning"
+              ? "text-warning"
+              : "text-primary";
           return (
             <Card key={stat.label} className="p-6 bg-gradient-card shadow-card">
               <div className="flex items-center justify-between">
@@ -111,14 +115,24 @@ const Index = () => {
                   <p className="text-2xl font-bold text-card-foreground">{stat.value}</p>
                   <p className={`text-sm font-medium ${trendColor}`}>{stat.change}</p>
                 </div>
-                <div className={`h-12 w-12 rounded-lg flex items-center justify-center ${
-                  stat.trend === "success" ? "bg-success/10" :
-                  stat.trend === "warning" ? "bg-warning/10" : "bg-primary/10"
-                }`}>
-                  <Icon className={`h-6 w-6 ${
-                    stat.trend === "success" ? "text-success" :
-                    stat.trend === "warning" ? "text-warning" : "text-primary"
-                  }`} />
+                <div
+                  className={`h-12 w-12 rounded-lg flex items-center justify-center ${
+                    stat.trend === "success"
+                      ? "bg-success/10"
+                      : stat.trend === "warning"
+                      ? "bg-warning/10"
+                      : "bg-primary/10"
+                  }`}
+                >
+                  <Icon
+                    className={`h-6 w-6 ${
+                      stat.trend === "success"
+                        ? "text-success"
+                        : stat.trend === "warning"
+                        ? "text-warning"
+                        : "text-primary"
+                    }`}
+                  />
                 </div>
               </div>
             </Card>
@@ -133,7 +147,6 @@ const Index = () => {
       <IntegrationStatus integrations={integrations} />
     </div>
   );
-
 
   const renderContent = () => {
     switch (currentPage) {

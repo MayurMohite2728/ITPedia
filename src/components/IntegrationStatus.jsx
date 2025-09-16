@@ -3,18 +3,7 @@ import { StatusBadge } from "./StatusBadge";
 import { Button } from "@/components/ui/button";
 import { ExternalLink, RefreshCw, AlertTriangle, CheckCircle } from "lucide-react";
 
-interface IntegrationStatusProps {
-  integrations: {
-    name: string;
-    status: "connected" | "error" | "syncing";
-    lastSync: string;
-    url?: string;
-    recordCount?: number;
-    errorMessage?: string;
-  }[];
-}
-
-export const IntegrationStatus = ({ integrations }: IntegrationStatusProps) => {
+export const IntegrationStatus = ({ integrations }) => {
   return (
     <Card className="p-6 bg-gradient-card shadow-card">
       <div className="flex items-center justify-between mb-4">
@@ -27,7 +16,10 @@ export const IntegrationStatus = ({ integrations }: IntegrationStatusProps) => {
       
       <div className="space-y-4">
         {integrations.map((integration) => (
-          <div key={integration.name} className="flex items-center justify-between p-4 rounded-lg bg-muted/50 border border-border">
+          <div 
+            key={integration.name} 
+            className="flex items-center justify-between p-4 rounded-lg bg-muted/50 border border-border"
+          >
             <div className="flex items-center gap-3">
               {integration.status === "connected" && <CheckCircle className="h-5 w-5 text-success" />}
               {integration.status === "error" && <AlertTriangle className="h-5 w-5 text-destructive" />}
@@ -58,7 +50,13 @@ export const IntegrationStatus = ({ integrations }: IntegrationStatusProps) => {
             
             <div className="flex items-center gap-2">
               <StatusBadge 
-                status={integration.status === "connected" ? "synced" : integration.status === "syncing" ? "pending" : "error"}
+                status={
+                  integration.status === "connected" 
+                    ? "synced" 
+                    : integration.status === "syncing" 
+                      ? "pending" 
+                      : "error"
+                }
               />
               <Button variant="ghost" size="sm">
                 <RefreshCw className="h-4 w-4" />

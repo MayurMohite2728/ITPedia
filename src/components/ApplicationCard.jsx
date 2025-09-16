@@ -3,22 +3,7 @@ import { StatusBadge } from "./StatusBadge";
 import { Badge } from "@/components/ui/badge";
 import { ExternalLink, Database, Clock } from "lucide-react";
 
-interface ApplicationCardProps {
-  application: {
-    app_id: number;
-    app_name: string;
-    app_type: string;
-    app_url?: string;
-    active: boolean;
-    added_on: string;
-    added_by: string;
-    componentCount?: number;
-    lastSyncDate?: string;
-  };
-  onClick?: () => void;
-}
-
-export const ApplicationCard = ({ application, onClick }: ApplicationCardProps) => {
+export const ApplicationCard = ({ application, onClick }) => {
   return (
     <Card 
       className="p-6 bg-gradient-card shadow-card hover:shadow-elevated transition-all duration-200 cursor-pointer"

@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Database, RefreshCw, AlertTriangle, Shield } from "lucide-react";
+import { ArrowRight, Database, RefreshCw, Shield } from "lucide-react";
 import { StatusBadge } from "./StatusBadge";
 
 export const DataFlowDiagram = () => {
@@ -56,7 +56,6 @@ export const DataFlowDiagram = () => {
             <Badge variant="outline" className="mt-1">Golden Library</Badge>
           </div>
         </div>
-
       </div>
 
       <div className="mt-6 p-4 bg-muted/50 rounded-lg">
