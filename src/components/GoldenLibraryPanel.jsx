@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "./StatusBadge";
 import { Progress } from "@/components/ui/progress";
+import LoadingBar from "react-top-loading-bar";
 import {
   Dialog,
   DialogContent,
@@ -100,15 +101,20 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
 
   const [riskCount, setRiskCount] = useState("");
 
+  const loadingBarRef = useRef(null);
+
   useEffect(() => {
     // Fetch the project list when the component mounts
     const goldenLibraryPanelSummery = async () => {
       try {
+        loadingBarRef?.current.continuousStart(); // Start loading bar
         const data = await getProductSummaryGoldenLibrary(); // Call the API to get the project list
         console.log(data);
         setLibraryList(data.data.librarylist);
       } catch (error) {
         setError(error.message); // Handle error if API call fails
+      } finally {
+        loadingBarRef?.current.complete(); // Finish loading bar
       }
     };
     goldenLibraryPanelSummery(); // Call the function to fetch data
@@ -117,6 +123,7 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
   useEffect(() => {
     const getProductSummary = async () => {
       try {
+        loadingBarRef?.current.continuousStart();
         const summeryStatus = await getProductSummaryStatus();
 
         console.log(summeryStatus);
@@ -124,6 +131,8 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
         setSummery(summeryStatus.products);
       } catch (error) {
         setError(error.message);
+      } finally {
+        loadingBarRef?.current.complete(); // Finish loading bar
       }
     };
 
@@ -133,6 +142,7 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
   useEffect(() => {
     const getProductRiskCount = async () => {
       try {
+        loadingBarRef?.current.continuousStart();
         const riskCountData = await getProductSummaryRiskCount();
 
         console.log(riskCountData);
@@ -140,6 +150,8 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
         setRiskCount(riskCountData.risk);
       } catch (error) {
         setError(error);
+      } finally {
+        loadingBarRef?.current.complete(); // Finish loading bar
       }
     };
     getProductRiskCount();
@@ -156,7 +168,10 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
 
   const normalizationRate = (normalizedCount / displayProducts) * 100;
 
-  const roundedNormalizationRate = Math.round(normalizationRate * 100) / 100;
+  const roundedNormalizationRate =
+    normalizationRate !== undefined && displayProducts !== 0
+      ? Math.round(normalizationRate * 100) / 100
+      : "Loading...";
 
   const getSecurityIcon = (status) => {
     switch (status) {
@@ -259,6 +274,7 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
 
   return (
     <div className="space-y-6">
+      <LoadingBar color="#f11946" ref={loadingBarRef} />
       {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-4 bg-gradient-card shadow-card">
@@ -324,6 +340,7 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
               />
               {isSyncingAll ? "Syncing..." : "Sync Now"}
             </Button>
+
             <Button size="sm" onClick={handleViewDetails}>
               View Full Library
             </Button>
@@ -722,6 +739,7 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
       </Dialog>
 
       {/* Product Details Dialog */}
+
       <Dialog open={isDetailsDialogOpen} onOpenChange={setIsDetailsDialogOpen}>
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
@@ -904,7 +922,6 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
               </div>
             </div>
           )}
-
           <DialogFooter>
             <Button
               variant="outline"
