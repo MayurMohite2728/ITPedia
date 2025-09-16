@@ -1,23 +1,41 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "./StatusBadge";
 import { Progress } from "@/components/ui/progress";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  Database, 
-  CheckCircle, 
-  AlertCircle, 
+import {
+  getProductSummaryGoldenLibrary,
+  getProductSummaryStatus,
+  getProductSummaryRiskCount,
+} from "../services/ServiceAPI";
+
+import {
+  Database,
+  CheckCircle,
+  AlertCircle,
   RefreshCw,
   TrendingUp,
   Calendar,
   Shield,
-  Edit3
+  Edit3,
 } from "lucide-react";
 
 export const GoldenLibraryPanel = ({ products = [] }) => {
@@ -25,7 +43,8 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [isSyncingAll, setIsSyncingAll] = useState(false);
+  const [isSyncingAll, setIsSyncingAll, getProductSummaryRisk] =
+    useState(false);
   const { toast } = useToast();
 
   const mockProducts = [
@@ -73,8 +92,64 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
     },
   ];
 
+  const [libraryList, setLibraryList] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [summery, setSummery] = useState("");
+
+  const [riskCount, setRiskCount] = useState("");
+
+  useEffect(() => {
+    // Fetch the project list when the component mounts
+    const goldenLibraryPanelSummery = async () => {
+      try {
+        const data = await getProductSummaryGoldenLibrary(); // Call the API to get the project list
+        console.log(data);
+        setLibraryList(data.data.librarylist);
+      } catch (error) {
+        setError(error.message); // Handle error if API call fails
+      }
+    };
+    goldenLibraryPanelSummery(); // Call the function to fetch data
+  }, []);
+
+  useEffect(() => {
+    const getProductSummary = async () => {
+      try {
+        const summeryStatus = await getProductSummaryStatus();
+
+        console.log(summeryStatus);
+
+        setSummery(summeryStatus.products);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    getProductSummary();
+  }, []);
+
+  useEffect(() => {
+    const getProductRiskCount = async () => {
+      try {
+        const riskCount = await getProductSummaryRiskCount();
+
+        console.log(riskCount);
+
+        setRiskCount(riskCount);
+      } catch (error) {
+        setError(error);
+      }
+    };
+    getProductRiskCount();
+  }, []);
+
   const displayProducts = products.length > 0 ? products : mockProducts;
-  const normalizedCount = displayProducts.filter(p => p.status === "normalized").length;
+  const displayProductsapi = libraryList.length > 0 ? products : libraryList;
+  const normalizedCount = displayProducts.filter(
+    (p) => p.status === "normalized"
+  ).length;
   const normalizationRate = (normalizedCount / displayProducts.length) * 100;
 
   const getSecurityIcon = (status) => {
@@ -118,7 +193,7 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
   const handleSyncAll = async () => {
     setIsSyncingAll(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       toast({
         title: "Sync Complete",
         description: "All products have been synchronized with IT-Pedia.",
@@ -136,10 +211,10 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
 
   const handleSaveManualReview = async () => {
     if (!selectedProduct) return;
-    
+
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1500));
       toast({
         title: "Product Updated",
         description: `${selectedProduct.normalizedName} has been updated and synced with IT-Pedia.`,
@@ -160,7 +235,7 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
   const handleSyncIndividual = async (productId) => {
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       toast({
         title: "Product Synced",
         description: "Product has been synchronized with IT-Pedia.",
@@ -183,8 +258,12 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
         <Card className="p-4 bg-gradient-card shadow-card">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Normalization Rate</p>
-              <p className="text-2xl font-bold">{normalizationRate.toFixed(1)}%</p>
+              <p className="text-sm text-muted-foreground">
+                Normalization Rate
+              </p>
+              <p className="text-2xl font-bold">
+                {summery ? `${summery.normalized} %` : "Loading..."}
+              </p>
             </div>
             <TrendingUp className="h-8 w-8 text-success" />
           </div>
@@ -195,7 +274,7 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm text-muted-foreground">Total Products</p>
-              <p className="text-2xl font-bold">{displayProducts.length}</p>
+              <p className="text-2xl font-bold">{summery.total}</p>
             </div>
             <Database className="h-8 w-8 text-primary" />
           </div>
@@ -206,7 +285,7 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
             <div>
               <p className="text-sm text-muted-foreground">Security Risks</p>
               <p className="text-2xl font-bold text-destructive">
-                {displayProducts.filter(p => p.securityStatus === "vulnerable").length}
+                {libraryList?.filter((p) => p.status === "vulnerable").length}
               </p>
             </div>
             <AlertCircle className="h-8 w-8 text-destructive" />
@@ -218,31 +297,157 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
       <Card className="p-6 bg-gradient-card shadow-card">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold">Application Golden Library</h3>
+            <h3 className="text-lg font-semibold">
+              Application Golden Library
+            </h3>
             <p className="text-sm text-muted-foreground">
               Standardized product names and lifecycle data from IT-Pedia
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
               onClick={handleSyncAll}
               disabled={isSyncingAll}
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isSyncingAll ? 'animate-spin' : ''}`} />
-              {isSyncingAll ? 'Syncing...' : 'Sync Now'}
+              <RefreshCw
+                className={`h-4 w-4 mr-2 ${isSyncingAll ? "animate-spin" : ""}`}
+              />
+              {isSyncingAll ? "Syncing..." : "Sync Now"}
             </Button>
-            <Button 
-              size="sm"
-              onClick={handleViewDetails}
-            >
+            <Button size="sm" onClick={handleViewDetails}>
               View Full Library
             </Button>
           </div>
         </div>
+      </Card>
 
-        <div className="space-y-3">
+      {/* display product from api  */}
+      <div className="space-y-3">
+        {libraryList.map((product, index) => (
+          <div
+            key={index}
+            className="p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer"
+            onClick={() => handleViewProductDetails(product)}
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  {getStatusIcon(product.status)}
+                  <div>
+                    <h4 className="font-semibold">
+                      {product.libproductname || "Unnamed Product"}
+                    </h4>
+                    {product.libproductorigname &&
+                      product.libproductorigname !== product.libproductname && (
+                        <p className="text-sm text-muted-foreground">
+                          Originally: "{product.libproductorigname}"
+                        </p>
+                      )}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Lifecycle Status
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-3 w-3" />
+                      <span className="text-sm">
+                        EOS:{" "}
+                        {product.lifecycleinfo.endOfSupport !==
+                          "Not Applicable" &&
+                        product.lifecycleinfo.endOfSupport !==
+                          "Not Yet Announced" &&
+                        product.lifecycleinfo.endOfSupport !== "Not Published"
+                          ? new Date(
+                              product.lifecycleinfo.endOfSupport
+                            ).getFullYear()
+                          : ""}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Security Status
+                    </p>
+                    <div className="flex items-center gap-2">
+                      {getSecurityIcon(product.isVulnerable)}
+                      <span className="text-sm capitalize">
+                        {product.isVulnerable ? "vulnerable" : "secure"}
+                      </span>
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Last Updated
+                    </p>
+                    <span className="text-sm">
+                      {new Date(product.lastUpdated).toLocaleDateString()}
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col items-end gap-2">
+                <div className="flex items-center gap-2">
+                  {product.status === "manual-review" && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleManualReview(product);
+                      }}
+                      className="text-xs px-2 py-1 h-auto"
+                    >
+                      <Edit3 className="h-3 w-3 mr-1" />
+                      Manual Review
+                    </Button>
+                  )}
+                  {product.status !== "normalized" && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSyncIndividual(product.id);
+                      }}
+                      disabled={isLoading}
+                      className="text-xs px-2 py-1 h-auto"
+                    >
+                      <RefreshCw
+                        className={`h-3 w-3 ${isLoading ? "animate-spin" : ""}`}
+                      />
+                    </Button>
+                  )}
+                </div>
+                <StatusBadge
+                  status={
+                    product.status === "normalized"
+                      ? "synced"
+                      : product.status === "error"
+                      ? "error"
+                      : "pending"
+                  }
+                >
+                  {product.status}
+                </StatusBadge>
+                <Badge variant="outline" className="text-xs">
+                  {product.source || "Unknown"}
+                </Badge>
+              </div>
+            </div>
+          </div>
+        ))}
+        {error && <div className="text-red-500">Error: {error}</div>}
+      </div>
+
+      {/* <div className="space-y-3">
           {displayProducts.map((product) => (
             <div
               key={product.id}
@@ -341,25 +546,26 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
               </div>
             </div>
           ))}
-        </div>
+        </div>  */}
 
-        <div className="mt-6 p-4 bg-muted/50 rounded-lg">
-          <div className="flex items-center justify-between">
-            <div>
-              <h5 className="font-medium">Automatic Enrichment Schedule</h5>
-              <p className="text-sm text-muted-foreground">
-                Hourly synchronization with IT-Pedia for updated lifecycle and security data
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <StatusBadge status="synced">Next sync in 23 min</StatusBadge>
-              <Button variant="outline" size="sm">
-                Configure Schedule
-              </Button>
-            </div>
+      {/* Automatic Enrichment Schedule */}
+      <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+        <div className="flex items-center justify-between">
+          <div>
+            <h5 className="font-medium">Automatic Enrichment Schedule</h5>
+            <p className="text-sm text-muted-foreground">
+              Hourly synchronization with IT-Pedia for updated lifecycle and
+              security data
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <StatusBadge status="synced">Next sync in 23 min</StatusBadge>
+            <Button variant="outline" size="sm">
+              Configure Schedule
+            </Button>
           </div>
         </div>
-      </Card>
+      </div>
 
       {/* Manual Review Dialog */}
       <Dialog open={isReviewDialogOpen} onOpenChange={setIsReviewDialogOpen}>
@@ -367,63 +573,64 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
           <DialogHeader>
             <DialogTitle>Manual Product Review</DialogTitle>
           </DialogHeader>
-          
+
           {selectedProduct && (
             <div className="space-y-4">
+              {/* Original & Normalized Names */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="original-name">Original Name</Label>
                   <Input
                     id="original-name"
-                    value={selectedProduct.originalName}
-                    onChange={(e) => setSelectedProduct({
-                      ...selectedProduct,
-                      originalName: e.target.value
-                    })}
+                    value={selectedProduct.libproductorigname || ""}
+                    onChange={(e) =>
+                      setSelectedProduct({
+                        ...selectedProduct,
+                        libproductorigname: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
                   <Label htmlFor="normalized-name">Normalized Name</Label>
                   <Input
                     id="normalized-name"
-                    value={selectedProduct.normalizedName}
-                    onChange={(e) => setSelectedProduct({
-                      ...selectedProduct,
-                      normalizedName: e.target.value
-                    })}
+                    value={selectedProduct.libproductname || ""}
+                    onChange={(e) =>
+                      setSelectedProduct({
+                        ...selectedProduct,
+                        libproductname: e.target.value,
+                      })
+                    }
                   />
                 </div>
               </div>
 
+              {/* Lifecycle Dates */}
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor="ga-date">General Availability</Label>
                   <Input
                     id="ga-date"
                     type="date"
-                    value={selectedProduct.lifecycle.generalAvailability || ''}
-                    onChange={(e) => setSelectedProduct({
-                      ...selectedProduct,
-                      lifecycle: {
-                        ...selectedProduct.lifecycle,
-                        generalAvailability: e.target.value
-                      }
-                    })}
+                    value={selectedProduct.lifecycleinfo.releaseDate || ""}
+                    onChange={(e) =>
+                      setSelectedProduct({
+                        ...selectedProduct,
+                        lifecycleinfo: {
+                          ...selectedProduct.lifecycleinfo,
+                          releaseDate: e.target.value,
+                        },
+                      })
+                    }
                   />
                 </div>
                 <div>
                   <Label htmlFor="eos-date">End of Support</Label>
                   <Input
                     id="eos-date"
-                    type="date"
-                    value={selectedProduct.lifecycle.endOfSupport || ''}
-                    onChange={(e) => setSelectedProduct({
-                      ...selectedProduct,
-                      lifecycle: {
-                        ...selectedProduct.lifecycle,
-                        endOfSupport: e.target.value
-                      }
-                    })}
+                    type="text"
+                    value={selectedProduct.lifecycleinfo.endOfSupport || ""}
                   />
                 </div>
                 <div>
@@ -431,26 +638,29 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
                   <Input
                     id="eol-date"
                     type="date"
-                    value={selectedProduct.lifecycle.endOfLife || ''}
-                    onChange={(e) => setSelectedProduct({
-                      ...selectedProduct,
-                      lifecycle: {
-                        ...selectedProduct.lifecycle,
-                        endOfLife: e.target.value
-                      }
-                    })}
+                    value={selectedProduct.lifecycleinfo.endOfLife || ""}
+                    onChange={(e) =>
+                      setSelectedProduct({
+                        ...selectedProduct,
+                        lifecycleinfo: {
+                          ...selectedProduct.lifecycleinfo,
+                          endOfLife: e.target.value,
+                        },
+                      })
+                    }
                   />
                 </div>
               </div>
 
+              {/* Security Status */}
               <div>
                 <Label htmlFor="security-status">Security Status</Label>
                 <Select
-                  value={selectedProduct.securityStatus}
-                  onValueChange={(value) => 
+                  value={selectedProduct.isVulnerable ? "vulnerable" : "secure"}
+                  onValueChange={(value) =>
                     setSelectedProduct({
                       ...selectedProduct,
-                      securityStatus: value
+                      isVulnerable: value === "vulnerable",
                     })
                   }
                 >
@@ -475,10 +685,7 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
             >
               Cancel
             </Button>
-            <Button
-              onClick={handleSaveManualReview}
-              disabled={isLoading}
-            >
+            <Button onClick={handleSaveManualReview} disabled={isLoading}>
               {isLoading ? (
                 <>
                   <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
@@ -497,116 +704,176 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {selectedProduct ? `${selectedProduct.normalizedName} Details` : "Golden Technology Library"}
+              {selectedProduct
+                ? `${
+                    selectedProduct.libproductname ||
+                    selectedProduct.libproductorigname
+                  } Details`
+                : "Golden Technology Library"}
             </DialogTitle>
           </DialogHeader>
-          
+
           {selectedProduct ? (
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Original Name</Label>
-                  <p className="text-lg font-semibold">{selectedProduct.originalName}</p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Normalized Name</Label>
-                  <p className="text-lg font-semibold">{selectedProduct.normalizedName}</p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <Label className="text-sm font-medium text-muted-foreground">General Availability</Label>
-                  <p className="font-medium">
-                    {selectedProduct.lifecycle.generalAvailability ? 
-                      new Date(selectedProduct.lifecycle.generalAvailability).toLocaleDateString() : 
-                      'Not specified'
-                    }
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    Original Name
+                  </Label>
+                  <p className="text-lg font-semibold">
+                    {selectedProduct.libproductorigname}
                   </p>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">End of Support</Label>
-                  <p className="font-medium">
-                    {selectedProduct.lifecycle.endOfSupport ? 
-                      new Date(selectedProduct.lifecycle.endOfSupport).toLocaleDateString() : 
-                      'Not specified'
-                    }
-                  </p>
-                </div>
-                <div>
-                  <Label className="text-sm font-medium text-muted-foreground">End of Life</Label>
-                  <p className="font-medium">
-                    {selectedProduct.lifecycle.endOfLife ? 
-                      new Date(selectedProduct.lifecycle.endOfLife).toLocaleDateString() : 
-                      'Not specified'
-                    }
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    Normalized Name
+                  </Label>
+                  <p className="text-lg font-semibold">
+                    {selectedProduct.libproductname || "Not Available"}
                   </p>
                 </div>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Security Status</Label>
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    Release Date
+                  </Label>
+                  <p className="font-medium">
+                    {selectedProduct.lifecycleinfo.releaseDate &&
+                    selectedProduct.lifecycleinfo.releaseDate !==
+                      "Not Applicable"
+                      ? new Date(
+                          selectedProduct.lifecycleinfo.releaseDate
+                        ).toLocaleDateString()
+                      : "Not Published"}
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    End of Support
+                  </Label>
+                  <p className="font-medium">
+                    {selectedProduct.lifecycleinfo.endOfSupport &&
+                    selectedProduct.lifecycleinfo.endOfSupport !==
+                      "Not Applicable"
+                      ? new Date(
+                          selectedProduct.lifecycleinfo.endOfSupport
+                        ).toLocaleDateString()
+                      : "Not Published"}
+                  </p>
+                </div>
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    End of Life
+                  </Label>
+                  <p className="font-medium">
+                    {selectedProduct.lifecycleinfo.endOfLife &&
+                    selectedProduct.lifecycleinfo.endOfLife !== "Not Applicable"
+                      ? new Date(
+                          selectedProduct.lifecycleinfo.endOfLife
+                        ).toLocaleDateString()
+                      : "Not Published"}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div>
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    Security Status
+                  </Label>
                   <div className="flex items-center gap-2 mt-1">
-                    {getSecurityIcon(selectedProduct.securityStatus)}
-                    <span className="font-medium capitalize">{selectedProduct.securityStatus}</span>
+                    {getSecurityIcon(
+                      selectedProduct.isVulnerable ? "vulnerable" : "secure"
+                    )}
+                    <span className="font-medium capitalize">
+                      {selectedProduct.isVulnerable ? "vulnerable" : "secure"}
+                    </span>
                   </div>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Normalization Status</Label>
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    Normalization Status
+                  </Label>
                   <div className="flex items-center gap-2 mt-1">
                     {getStatusIcon(selectedProduct.status)}
-                    <span className="font-medium capitalize">{selectedProduct.status.replace('-', ' ')}</span>
+                    <span className="font-medium capitalize">
+                      {selectedProduct.status.replace("-", " ")}
+                    </span>
                   </div>
                 </div>
                 <div>
-                  <Label className="text-sm font-medium text-muted-foreground">Source</Label>
-                  <Badge variant="outline" className="mt-1">{selectedProduct.source}</Badge>
+                  <Label className="text-sm font-medium text-muted-foreground">
+                    Source
+                  </Label>
+                  <Badge variant="outline" className="mt-1">
+                    Golden Library
+                  </Badge>
                 </div>
               </div>
 
               <div>
-                <Label className="text-sm font-medium text-muted-foreground">Last Updated</Label>
-                <p className="font-medium">{new Date(selectedProduct.lastUpdated).toLocaleString()}</p>
+                <Label className="text-sm font-medium text-muted-foreground">
+                  Last Updated
+                </Label>
+                <p className="font-medium">
+                  {new Date(selectedProduct.lastUpdated).toLocaleString()}
+                </p>
               </div>
             </div>
           ) : (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <p className="text-muted-foreground">
-                  Showing {displayProducts.length} products from your technology library
+                  Showing {libraryList.length} products from your technology
+                  library
                 </p>
-                <Button size="sm" onClick={handleSyncAll} disabled={isSyncingAll}>
-                  <RefreshCw className={`h-4 w-4 mr-2 ${isSyncingAll ? 'animate-spin' : ''}`} />
+                <Button
+                  size="sm"
+                  onClick={handleSyncAll}
+                  disabled={isSyncingAll}
+                >
+                  <RefreshCw
+                    className={`h-4 w-4 mr-2 ${
+                      isSyncingAll ? "animate-spin" : ""
+                    }`}
+                  />
                   Sync All
                 </Button>
               </div>
-              
+
               <div className="space-y-2 max-h-96 overflow-y-auto">
-                {displayProducts.map((product) => (
+                {libraryList.map((product, index) => (
                   <div
-                    key={product.id}
+                    key={index}
                     className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer"
                     onClick={() => handleViewProductDetails(product)}
                   >
                     <div className="flex items-center gap-3">
                       {getStatusIcon(product.status)}
                       <div>
-                        <p className="font-medium">{product.normalizedName}</p>
+                        <p className="font-medium">
+                          {product.libproductname || "Not Available"}
+                        </p>
                         <p className="text-sm text-muted-foreground">
-                          {product.originalName !== product.normalizedName && 
-                            `Originally: "${product.originalName}"`
-                          }
+                          {product.libproductorigname !==
+                            product.libproductname &&
+                            `Originally: "${product.libproductorigname}"`}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      {getSecurityIcon(product.securityStatus)}
-                      <StatusBadge 
+                      {getSecurityIcon(
+                        product.isVulnerable ? "vulnerable" : "secure"
+                      )}
+                      <StatusBadge
                         status={
-                          product.status === "normalized" ? "synced" : 
-                          product.status === "error" ? "error" : 
-                          "pending"
+                          product.status === "normalized"
+                            ? "synced"
+                            : product.status === "manual-review"
+                            ? "pending"
+                            : "error"
                         }
                       />
                     </div>
