@@ -133,11 +133,11 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
   useEffect(() => {
     const getProductRiskCount = async () => {
       try {
-        const riskCount = await getProductSummaryRiskCount();
+        const riskCountData = await getProductSummaryRiskCount();
 
-        console.log(riskCount);
+        console.log(riskCountData);
 
-        setRiskCount(riskCount);
+        setRiskCount(riskCountData.risk);
       } catch (error) {
         setError(error);
       }
@@ -293,7 +293,7 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
               <p className="text-sm text-muted-foreground">Security Risks</p>
               <p className="text-2xl font-bold text-destructive">
                 {/* {libraryList?.filter((p) => p.status === "vulnerable").length} */}
-                {riskCount?.risk.total}
+                {riskCount && riskCount.total}
               </p>
             </div>
             <AlertCircle className="h-8 w-8 text-destructive" />
@@ -403,7 +403,7 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
 
               <div className="flex flex-col items-end gap-2">
                 <div className="flex items-center gap-2">
-                  {product.status === "manual-review" && (
+                  {product.status === "inprogress" && (
                     <Button
                       variant="outline"
                       size="sm"
@@ -628,7 +628,7 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
                 </div>
               </div>
 
-              {/* Lifecycle Dates */}
+              {/* Lifecycle Dates for availability */}
               <div className="grid grid-cols-3 gap-4">
                 <div>
                   <Label htmlFor="ga-date">General Availability</Label>
