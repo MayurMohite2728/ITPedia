@@ -448,105 +448,119 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
       </div>
 
       {/* <div className="space-y-3">
-          {displayProducts.map((product) => (
-            <div
-              key={product.id}
-              className="p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer"
-              onClick={() => handleViewProductDetails(product)}
-            >
-              <div className="flex items-start justify-between">
-                <div className="flex-1">
-                  <div className="flex items-center gap-3 mb-2">
-                    {getStatusIcon(product.status)}
-                    <div>
-                      <h4 className="font-semibold">{product.normalizedName}</h4>
-                      {product.originalName !== product.normalizedName && (
-                        <p className="text-sm text-muted-foreground">
-                          Originally: "{product.originalName}"
-                        </p>
-                      )}
-                    </div>
+        {displayProducts.map((product) => (
+          <div
+            key={product.id}
+            className="p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer"
+            onClick={() => handleViewProductDetails(product)}
+          >
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-2">
+                  {getStatusIcon(product.status)}
+                  <div>
+                    <h4 className="font-semibold">{product.normalizedName}</h4>
+                    {product.originalName !== product.normalizedName && (
+                      <p className="text-sm text-muted-foreground">
+                        Originally: "{product.originalName}"
+                      </p>
+                    )}
                   </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Lifecycle Status</p>
-                      <div className="flex items-center gap-2">
-                        <Calendar className="h-3 w-3" />
-                        <span className="text-sm">
-                          EOS: {product.lifecycle.endOfSupport ? 
-                            new Date(product.lifecycle.endOfSupport).getFullYear() : 
-                            'Unknown'
-                          }
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Security Status</p>
-                      <div className="flex items-center gap-2">
-                        {getSecurityIcon(product.securityStatus)}
-                        <span className="text-sm capitalize">{product.securityStatus}</span>
-                      </div>
-                    </div>
-                    
-                    <div>
-                      <p className="text-xs text-muted-foreground mb-1">Last Updated</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-3">
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Lifecycle Status
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-3 w-3" />
                       <span className="text-sm">
-                        {new Date(product.lastUpdated).toLocaleDateString()}
+                        EOS:{" "}
+                        {product.lifecycle.endOfSupport
+                          ? new Date(
+                              product.lifecycle.endOfSupport
+                            ).getFullYear()
+                          : "Unknown"}
                       </span>
                     </div>
                   </div>
-                </div>
-                
-                <div className="flex flex-col items-end gap-2">
-                  <div className="flex items-center gap-2">
-                    {product.status === "manual-review" && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleManualReview(product);
-                        }}
-                        className="text-xs px-2 py-1 h-auto"
-                      >
-                        <Edit3 className="h-3 w-3 mr-1" />
-                        Manual Review
-                      </Button>
-                    )}
-                    {product.status !== "normalized" && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleSyncIndividual(product.id);
-                        }}
-                        disabled={isLoading}
-                        className="text-xs px-2 py-1 h-auto"
-                      >
-                        <RefreshCw className={`h-3 w-3 ${isLoading ? 'animate-spin' : ''}`} />
-                      </Button>
-                    )}
+
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Security Status
+                    </p>
+                    <div className="flex items-center gap-2">
+                      {getSecurityIcon(product.securityStatus)}
+                      <span className="text-sm capitalize">
+                        {product.securityStatus}
+                      </span>
+                    </div>
                   </div>
-                  <StatusBadge 
-                    status={
-                      product.status === "normalized" ? "synced" : 
-                      product.status === "error" ? "error" : 
-                      "pending"
-                    }
-                  >
-                    {product.status}
-                  </StatusBadge>
-                  <Badge variant="outline" className="text-xs">
-                    {product.source}
-                  </Badge>
+
+                  <div>
+                    <p className="text-xs text-muted-foreground mb-1">
+                      Last Updated
+                    </p>
+                    <span className="text-sm">
+                      {new Date(product.lastUpdated).toLocaleDateString()}
+                    </span>
+                  </div>
                 </div>
               </div>
+
+              <div className="flex flex-col items-end gap-2">
+                <div className="flex items-center gap-2">
+                  {product.status === "manual-review" && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleManualReview(product);
+                      }}
+                      className="text-xs px-2 py-1 h-auto"
+                    >
+                      <Edit3 className="h-3 w-3 mr-1" />
+                      Manual Review
+                    </Button>
+                  )}
+                  {product.status !== "normalized" && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleSyncIndividual(product.id);
+                      }}
+                      disabled={isLoading}
+                      className="text-xs px-2 py-1 h-auto"
+                    >
+                      <RefreshCw
+                        className={`h-3 w-3 ${isLoading ? "animate-spin" : ""}`}
+                      />
+                    </Button>
+                  )}
+                </div>
+                <StatusBadge
+                  status={
+                    product.status === "normalized"
+                      ? "synced"
+                      : product.status === "error"
+                      ? "error"
+                      : "pending"
+                  }
+                >
+                  {product.status}
+                </StatusBadge>
+                <Badge variant="outline" className="text-xs">
+                  {product.source}
+                </Badge>
+              </div>
             </div>
-          ))}
-        </div>  */}
+          </div>
+        ))}
+      </div> */}
 
       {/* Automatic Enrichment Schedule */}
       <div className="mt-6 p-4 bg-muted/50 rounded-lg">
