@@ -145,12 +145,18 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
     getProductRiskCount();
   }, []);
 
-  const displayProducts = products.length > 0 ? products : mockProducts;
-  const displayProductsapi = libraryList.length > 0 ? products : libraryList;
-  const normalizedCount = displayProducts.filter(
+  const displayProducts = libraryList.length > 0 ? libraryList.length : "none";
+
+  const displayProductsapi =
+    libraryList.length > 0 ? libraryList : libraryList.length;
+
+  const normalizedCount = libraryList.filter(
     (p) => p.status === "normalized"
   ).length;
-  const normalizationRate = (normalizedCount / displayProducts.length) * 100;
+
+  const normalizationRate = (normalizedCount / displayProducts) * 100;
+
+  const roundedNormalizationRate = Math.round(normalizationRate * 100) / 100;
 
   const getSecurityIcon = (status) => {
     switch (status) {
@@ -262,7 +268,8 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
                 Normalization Rate
               </p>
               <p className="text-2xl font-bold">
-                {summery ? `${summery.normalized} %` : "Loading..."}
+                {/* {summery ? `${summery.normalized} %` : "Loading..."} */}
+                {`${roundedNormalizationRate}%`}
               </p>
             </div>
             <TrendingUp className="h-8 w-8 text-success" />
@@ -285,7 +292,8 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
             <div>
               <p className="text-sm text-muted-foreground">Security Risks</p>
               <p className="text-2xl font-bold text-destructive">
-                {libraryList?.filter((p) => p.status === "vulnerable").length}
+                {/* {libraryList?.filter((p) => p.status === "vulnerable").length} */}
+                {riskCount?.risk.total}
               </p>
             </div>
             <AlertCircle className="h-8 w-8 text-destructive" />
