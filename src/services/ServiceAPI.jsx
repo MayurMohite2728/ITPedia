@@ -1,5 +1,5 @@
 export const getProductSummaryGoldenLibrary = async () => {
-  const API_BASE_URL = "http://localhost:8084/api/v1/reports/products";
+  // const API_BASE_URL = "http://localhost:8084/api/v1/reports/products";
   try {
     const response = await fetch(
       `/api/v1/reports/products//summary/library/details`,

@@ -668,8 +668,17 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
                   <Label htmlFor="eos-date">End of Support</Label>
                   <Input
                     id="eos-date"
-                    type="text"
+                    type="date"
                     value={selectedProduct.lifecycleinfo.endOfSupport || ""}
+                    onChange={(e) =>
+                      setSelectedProduct({
+                        ...selectedProduct,
+                        lifecycleinfo: {
+                          ...selectedProduct.lifecycleinfo,
+                          endOfSupport: e.target.value,
+                        },
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -932,7 +941,7 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
             >
               Close
             </Button>
-            {selectedProduct && selectedProduct.status === "manual-review" && (
+            {selectedProduct && selectedProduct.status === "inprogress" && (
               <Button
                 onClick={() => {
                   setIsDetailsDialogOpen(false);
