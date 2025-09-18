@@ -64,3 +64,27 @@ export const getProductSummaryRiskCount = async () => {
     throw error;
   }
 };
+
+export const syncAllProduct = async () => {
+  try {
+    const response = await fetch(
+      `https://eimsdemo.mannaicorp.com.qa:8084/itportitepediaservice/api/v1/repo-itpedia/products/sync`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching product summary status:", error);
+    throw error;
+  }
+};

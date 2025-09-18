@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "./StatusBadge";
 import { Progress } from "@/components/ui/progress";
 import LoadingBar from "react-top-loading-bar";
+import { NavigationLayout } from "./NavigationLayout";
 import {
   Dialog,
   DialogContent,
@@ -39,7 +40,7 @@ import {
   Edit3,
 } from "lucide-react";
 
-export const GoldenLibraryPanel = ({ products = [] }) => {
+export const GoldenLibraryPanel = (searchValue, setSearchValue) => {
   const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -230,6 +231,27 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
     }
   };
 
+  //   const handleSyncAll = async () => {
+  //   setIsSyncingAll(true);
+  //   try {
+  //     // Call your API instead of just waiting
+  //     const result = await syncAllProduct();
+
+  //     toast({
+  //       title: "Sync Complete",
+  //       description: result?.message || "All products have been synchronized with IT-Pedia.",
+  //     });
+  //   } catch (error) {
+  //     toast({
+  //       title: "Sync Failed",
+  //       description: "Failed to synchronize with IT-Pedia. Please try again.",
+  //       variant: "destructive",
+  //     });
+  //   } finally {
+  //     setIsSyncingAll(false);
+  //   }
+  // };
+
   const handleSaveManualReview = async () => {
     if (!selectedProduct) return;
 
@@ -275,6 +297,7 @@ export const GoldenLibraryPanel = ({ products = [] }) => {
   return (
     <div className="space-y-6">
       <LoadingBar color="#f11946" ref={loadingBarRef} />
+
       {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <Card className="p-4 bg-gradient-card shadow-card">
