@@ -48,7 +48,7 @@ export const NavigationLayout = ({
             />
 
             <div className="hidden md:flex h-6 w-px bg-border" />
-            <div className="hidden md:block relative">
+            {/* <div className="hidden md:block relative">
               <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search applications, components..."
@@ -56,16 +56,16 @@ export const NavigationLayout = ({
                 onChange={(e) => setSearchValue(e.target.value)}
                 className="pl-10 w-60 md:w-80"
               />
-            </div>
+            </div> */}
           </div>
 
           {/* Right side: Buttons + User */}
           <div className="flex items-center gap-2 md:gap-4">
             <div className="hidden md:flex gap-2">
-              <Button variant="outline" size="sm">
+              {/* <Button variant="outline" size="sm">
                 <RefreshCw className="h-4 w-4 mr-2 btn-default-bg-color" />
                 Sync All
-              </Button>
+              </Button> */}
               <Button variant="ghost" size="sm">
                 <Bell className="h-4 w-4" />
               </Button>

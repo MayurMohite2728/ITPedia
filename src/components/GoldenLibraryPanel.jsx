@@ -412,8 +412,8 @@ export const GoldenLibraryPanel = (searchValue, setSearchValue) => {
                         product.lifecycleinfo.endOfSupport !== "Not Published"
                           ? new Date(
                               product.lifecycleinfo.endOfSupport
-                            ).getFullYear()
-                          : ""}
+                            ).toLocaleDateString()
+                          : "Not Published"}
                       </span>
                     </div>
                   </div>
@@ -443,7 +443,7 @@ export const GoldenLibraryPanel = (searchValue, setSearchValue) => {
 
               <div className="flex flex-col items-end gap-2">
                 <div className="flex items-center gap-2">
-                  {product.status === "inprogress" && (
+                  {product.status === "unrecognized" && (
                     <Button
                       variant="outline"
                       size="sm"
@@ -485,8 +485,11 @@ export const GoldenLibraryPanel = (searchValue, setSearchValue) => {
                 >
                   {product.status}
                 </StatusBadge>
-                <Badge variant="outline" className="text-xs">
+                {/* <Badge variant="outline" className="text-xs">
                   {product.source || "Unknown"}
+                </Badge> */}
+                <Badge variant="outline" className="text-xs">
+                  ABACUS Application Catalogue
                 </Badge>
               </div>
             </div>
@@ -671,10 +674,10 @@ export const GoldenLibraryPanel = (searchValue, setSearchValue) => {
               {/* Lifecycle Dates for availability */}
               <div className="grid grid-cols-3 gap-4">
                 <div>
-                  <Label htmlFor="ga-date">General Availability</Label>
+                  <Label htmlFor="ga-date">Version</Label>
                   <Input
                     id="ga-date"
-                    type="date"
+                    type="input"
                     value={selectedProduct.lifecycleinfo.releaseDate || ""}
                     onChange={(e) =>
                       setSelectedProduct({
@@ -688,10 +691,10 @@ export const GoldenLibraryPanel = (searchValue, setSearchValue) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="eos-date">End of Support</Label>
+                  <Label htmlFor="eos-date">Type</Label>
                   <Input
                     id="eos-date"
-                    type="date"
+                    type="input"
                     value={selectedProduct.lifecycleinfo.endOfSupport || ""}
                     onChange={(e) =>
                       setSelectedProduct({
@@ -705,10 +708,10 @@ export const GoldenLibraryPanel = (searchValue, setSearchValue) => {
                   />
                 </div>
                 <div>
-                  <Label htmlFor="eol-date">End of Life</Label>
+                  <Label htmlFor="eol-date">Manufacturer name</Label>
                   <Input
                     id="eol-date"
-                    type="date"
+                    type="input"
                     value={selectedProduct.lifecycleinfo.endOfLife || ""}
                     onChange={(e) =>
                       setSelectedProduct({
@@ -964,7 +967,7 @@ export const GoldenLibraryPanel = (searchValue, setSearchValue) => {
             >
               Close
             </Button>
-            {selectedProduct && selectedProduct.status === "inprogress" && (
+            {selectedProduct && selectedProduct.status === "unrecognized" && (
               <Button
                 onClick={() => {
                   setIsDetailsDialogOpen(false);
