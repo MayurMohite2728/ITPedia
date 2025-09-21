@@ -6,19 +6,26 @@ import { componentTagger } from "lovable-tagger";
 export default defineConfig(({ mode }) => ({
   server: {
     host: "0.0.0.0",
-    port: 8081,
-    proxy: {
-      '/api': {
-        target: 'http://localhost:8084',
-        changeOrigin: true,
-        // rewrite: (path) => path.replace(/^\/api/, ''), // Optional if needed
-      },
+   port: 8081,
+   proxy: {
+  '/api': {
+    target: 'http://localhost:8084',
+    changeOrigin: true,
+    secure: false,
+    rewrite: (p) => p, // keep /api
+    configure: (proxy) => {
+      proxy.on('proxyReq', (req) => console.log('Proxying request:', req.path));
+      proxy.on('error', (err) => console.error('Proxy error:', err));
+      proxy.on('proxyRes', (res, req) =>
+        console.log('Received response from backend:', req.path, res.statusCode)
+      );
     },
+  },
+}
   },
   plugins: [
     react(),
-    mode === 'development' &&
-    componentTagger(),
+    mode === 'development' && componentTagger(),
   ].filter(Boolean),
   resolve: {
     alias: {
