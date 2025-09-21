@@ -65,6 +65,27 @@ export const getProductSummaryRiskCount = async () => {
   }
 };
 
+export const getlifeCycle = async () => {
+  try {
+    const response = await fetch(`/api/v1/reports/products/summary/lifecycle`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching product summary status:", error);
+    throw error;
+  }
+};
+
 // export const syncAllProduct = async () => {
 //   try {
 //     const response = await fetch(

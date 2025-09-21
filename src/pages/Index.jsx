@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavigationLayout } from "@/components/NavigationLayout";
 import { ApplicationCard } from "@/components/ApplicationCard";
 import { IntegrationStatus } from "@/components/IntegrationStatus";
@@ -10,10 +10,10 @@ import IntegrationConfiguration from "@/components/IntegrationConfiguration";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { 
-  TrendingUp, 
-  Database, 
-  Users, 
+import {
+  TrendingUp,
+  Database,
+  Users,
   Activity,
   Plus,
   Filter,
@@ -21,19 +21,157 @@ import {
   List,
   Shield,
   AlertTriangle,
-  CheckCircle
+  CheckCircle,
 } from "lucide-react";
+
+import {
+  getProductSummaryGoldenLibrary,
+  getProductSummaryStatus,
+  getProductSummaryRiskCount,
+  getlifeCycle,
+} from "../services/ServiceAPI";
 
 const Index = () => {
   const [currentPage, setCurrentPage] = useState("dashboard");
   const [viewMode, setViewMode] = useState("grid"); // ✅ removed TS type
 
+  // changes for current value .
+
+  const [libraryList, setLibraryList] = useState([]);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  const [summery, setSummery] = useState("");
+
+  const [riskCount, setRiskCount] = useState("");
+
+  const [lifeCycle, setLifecycle] = useState("");
+
+  useEffect(() => {
+    // Fetch the project list when the component mounts
+    const goldenLibraryPanelSummery = async () => {
+      try {
+        // loadingBarRef?.current.continuousStart(); // Start loading bar
+        const data = await getProductSummaryGoldenLibrary(); // Call the API to get the project list
+        console.log(data);
+        setLibraryList(data.data.librarylist);
+      } catch (error) {
+        setError(error.message); // Handle error if API call fails
+      } finally {
+        // loadingBarRef?.current.complete(); // Finish loading bar
+      }
+    };
+    goldenLibraryPanelSummery(); // Call the function to fetch data
+  }, []);
+
+  useEffect(() => {
+    const getProductSummary = async () => {
+      try {
+        // loadingBarRef?.current.continuousStart();
+        const summeryStatus = await getProductSummaryStatus();
+
+        console.log(summeryStatus);
+
+        setSummery(summeryStatus.products);
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        // loadingBarRef?.current.complete(); // Finish loading bar
+      }
+    };
+
+    getProductSummary();
+  }, []);
+
+  useEffect(() => {
+    const getProductRiskCount = async () => {
+      try {
+        // loadingBarRef?.current.continuousStart();
+        const riskCountData = await getProductSummaryRiskCount();
+
+        console.log(riskCountData);
+
+        setRiskCount(riskCountData.risk);
+      } catch (error) {
+        setError(error);
+      } finally {
+        // loadingBarRef?.current.complete(); // Finish loading bar
+      }
+    };
+    getProductRiskCount();
+  }, []);
+  getlifeCycle;
+
+  useEffect(() => {
+    const getLifeCycle = async () => {
+      try {
+        // loadingBarRef?.current.continuousStart();
+        const lifeCycle = await getlifeCycle();
+
+        console.log(lifeCycle);
+
+        setLifecycle(lifeCycle.productLifeCycle.counts);
+      } catch (error) {
+        setError(error);
+      } finally {
+        // loadingBarRef?.current.complete(); // Finish loading bar
+      }
+    };
+    getLifeCycle();
+  }, []);
+
+  //get total lifecycle count
+
+  const totalLifeCycleCount =
+    lifeCycle.endOfSupport + lifeCycle.endOfSale + lifeCycle.startOfLife;
+
+  const displayProducts = libraryList.length > 0 ? libraryList.length : "none";
+
+  console.log(displayProducts);
+  const normalizedCount = libraryList.filter(
+    (p) => p.status === "normalized"
+  ).length;
+
+  const normalizationRate = (normalizedCount / displayProducts) * 100;
+
+  const roundedNormalizationRate =
+    normalizationRate !== undefined && displayProducts !== 0
+      ? Math.round(normalizationRate * 100) / 100
+      : "Loading...";
+
   // Mock data - would come from your API
   const dashboardStats = [
-    { label: "Products Normalized", value: "1,247", change: "+89%", icon: CheckCircle, trend: "success" },
-    { label: "Active Risk Alerts", value: "7", change: "-3", icon: AlertTriangle, trend: "warning" },
-    { label: "Lifecycle Events", value: "23", change: "+5", icon: TrendingUp, trend: "info" },
-    { label: "Golden Library Coverage", value: "94.2%", change: "+2.1%", icon: Shield, trend: "success" },
+    {
+      label: "Products Normalized",
+      value: summery?.normalized || "Not Published", //Count of total product normalized
+      change: "",
+      icon: CheckCircle,
+      trend: "success",
+    },
+    {
+      label: "Active Risk Alerts", //total number risk from json api
+      value: "7",
+      change: "",
+      icon: AlertTriangle,
+      trend: "warning",
+    },
+    {
+      label: "Lifecycle Events", //total number of lifecycles api end of support + endOfLife +endOfSale + count value
+      value: totalLifeCycleCount ? totalLifeCycleCount : "notPublished",
+      change: "",
+      icon: TrendingUp,
+      trend: "info",
+    },
+    {
+      label: "Golden Library Coverage", //toal product normalized rate value .
+      value: roundedNormalizationRate
+        ? `${roundedNormalizationRate}%`
+        : "Not Published",
+      change: "",
+      icon: Shield,
+      trend: "success",
+    },
   ];
 
   const applications = [
@@ -111,9 +249,15 @@ const Index = () => {
             <Card key={stat.label} className="p-6 bg-gradient-card shadow-card">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
-                  <p className="text-2xl font-bold text-card-foreground">{stat.value}</p>
-                  <p className={`text-sm font-medium ${trendColor}`}>{stat.change}</p>
+                  <p className="text-sm font-medium text-muted-foreground">
+                    {stat.label}
+                  </p>
+                  <p className="text-2xl font-bold text-card-foreground">
+                    {stat.value}
+                  </p>
+                  <p className={`text-sm font-medium ${trendColor}`}>
+                    {stat.change}
+                  </p>
                 </div>
                 <div
                   className={`h-12 w-12 rounded-lg flex items-center justify-center ${

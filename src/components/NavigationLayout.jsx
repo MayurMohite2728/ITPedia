@@ -76,7 +76,7 @@ export const NavigationLayout = ({
                   className="h-8 w-8 rounded-full"
                 />
                 <span className="text-sm font-medium text-gray-700">
-                  Username
+                  MannaiUser1
                 </span>
                 <ChevronDown className="h-4 w-4 text-gray-500" />
               </button>

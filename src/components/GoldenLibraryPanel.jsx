@@ -40,7 +40,7 @@ import {
   Edit3,
 } from "lucide-react";
 
-export const GoldenLibraryPanel = (searchValue, setSearchValue) => {
+export const GoldenLibraryPanel = () => {
   const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
@@ -49,50 +49,50 @@ export const GoldenLibraryPanel = (searchValue, setSearchValue) => {
     useState(false);
   const { toast } = useToast();
 
-  const mockProducts = [
-    {
-      id: "1",
-      originalName: "Apache Tomcat v9.0",
-      normalizedName: "Apache Tomcat 9.0.x",
-      source: "ABACUS Application Catalogue",
-      status: "normalized",
-      lifecycle: {
-        generalAvailability: "2018-09-01",
-        endOfSupport: "2027-12-31",
-        endOfLife: "2030-12-31",
-      },
-      securityStatus: "vulnerable",
-      lastUpdated: "2024-01-20T14:30:00Z",
-    },
-    {
-      id: "2",
-      originalName: "Microsoft SQL Server 2019",
-      normalizedName: "Microsoft SQL Server 2019",
-      source: "ABACUS Application Catalogue",
-      status: "normalized",
-      lifecycle: {
-        generalAvailability: "2019-11-04",
-        endOfSupport: "2030-01-08",
-        endOfLife: "2030-01-08",
-      },
-      securityStatus: "secure",
-      lastUpdated: "2024-01-20T12:15:00Z",
-    },
-    {
-      id: "3",
-      originalName: "Oracle DB 19c Enterprise",
-      normalizedName: "Oracle Database 19c",
-      source: "ABACUS Application Catalogue",
-      status: "manual-review",
-      lifecycle: {
-        generalAvailability: "2019-02-01",
-        endOfSupport: "2027-04-30",
-        endOfLife: "2027-04-30",
-      },
-      securityStatus: "unknown",
-      lastUpdated: "2024-01-20T10:45:00Z",
-    },
-  ];
+  // const mockProducts = [
+  //   {
+  //     id: "1",
+  //     originalName: "Apache Tomcat v9.0",
+  //     normalizedName: "Apache Tomcat 9.0.x",
+  //     source: "ABACUS Application Catalogue",
+  //     status: "normalized",
+  //     lifecycle: {
+  //       generalAvailability: "2018-09-01",
+  //       endOfSupport: "2027-12-31",
+  //       endOfLife: "2030-12-31",
+  //     },
+  //     securityStatus: "vulnerable",
+  //     lastUpdated: "2024-01-20T14:30:00Z",
+  //   },
+  //   {
+  //     id: "2",
+  //     originalName: "Microsoft SQL Server 2019",
+  //     normalizedName: "Microsoft SQL Server 2019",
+  //     source: "ABACUS Application Catalogue",
+  //     status: "normalized",
+  //     lifecycle: {
+  //       generalAvailability: "2019-11-04",
+  //       endOfSupport: "2030-01-08",
+  //       endOfLife: "2030-01-08",
+  //     },
+  //     securityStatus: "secure",
+  //     lastUpdated: "2024-01-20T12:15:00Z",
+  //   },
+  //   {
+  //     id: "3",
+  //     originalName: "Oracle DB 19c Enterprise",
+  //     normalizedName: "Oracle Database 19c",
+  //     source: "ABACUS Application Catalogue",
+  //     status: "manual-review",
+  //     lifecycle: {
+  //       generalAvailability: "2019-02-01",
+  //       endOfSupport: "2027-04-30",
+  //       endOfLife: "2027-04-30",
+  //     },
+  //     securityStatus: "unknown",
+  //     lastUpdated: "2024-01-20T10:45:00Z",
+  //   },
+  // ];
 
   const [libraryList, setLibraryList] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -160,14 +160,16 @@ export const GoldenLibraryPanel = (searchValue, setSearchValue) => {
 
   const displayProducts = libraryList.length > 0 ? libraryList.length : "none";
 
-  const displayProductsapi =
-    libraryList.length > 0 ? libraryList : libraryList.length;
+  // const displayProductsapi =
+  //   libraryList.length > 0 ? libraryList : libraryList.length;
 
   const normalizedCount = libraryList.filter(
     (p) => p.status === "normalized"
   ).length;
 
   const normalizationRate = (normalizedCount / displayProducts) * 100;
+
+  console.log(normalizationRate);
 
   const roundedNormalizationRate =
     normalizationRate !== undefined && displayProducts !== 0
@@ -364,7 +366,11 @@ export const GoldenLibraryPanel = (searchValue, setSearchValue) => {
               {isSyncingAll ? "Syncing..." : "Sync Now"}
             </Button>
 
-            <Button size="sm" onClick={handleViewDetails}>
+            <Button
+              size="sm"
+              style={{ color: "white" }}
+              onClick={handleViewDetails}
+            >
               View Full Library
             </Button>
           </div>
@@ -906,6 +912,7 @@ export const GoldenLibraryPanel = (searchValue, setSearchValue) => {
                 </p>
                 <Button
                   size="sm"
+                  style={{ color: "white" }}
                   onClick={handleSyncAll}
                   disabled={isSyncingAll}
                 >
