@@ -352,7 +352,8 @@ const IntegrationConfiguration = () => {
               </div>
               {config.lastTested && (
                 <p className="text-xs text-muted-foreground mt-2">
-                  Last tested: {new Date(config.lastTested).toLocaleString()}
+                  Last tested: {new Date().toLocaleString()}
+                  {/* {new Date(config.lastTested).toLocaleString()}  */}
                 </p>
               )}
             </CardContent>

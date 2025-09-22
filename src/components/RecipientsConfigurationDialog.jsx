@@ -40,7 +40,7 @@ export const RecipientsConfigurationDialog = ({
   const [recipients, setRecipients] = useState([
     {
       id: "1",
-      email: "security.ops@company.com",
+      email: "Inthihas.Ananchintavida@mannai.com.qa",
       name: "Security Operations Team",
       role: "Security Team",
       department: "IT Security",
@@ -54,8 +54,8 @@ export const RecipientsConfigurationDialog = ({
     },
     {
       id: "2",
-      email: "asset.manager@company.com",
-      name: "John Smith",
+      email: "testUser1@mannai.com.qa",
+      name: "testUser1",
       role: "Asset Manager",
       department: "IT Operations",
       notificationTypes: [
@@ -68,8 +68,8 @@ export const RecipientsConfigurationDialog = ({
     },
     {
       id: "3",
-      email: "compliance@company.com",
-      name: "Compliance Team",
+      email: "testUser2@mannai.com.qa",
+      name: "testUser2",
       role: "Compliance Officer",
       department: "Risk & Compliance",
       notificationTypes: ["compliance-issues", "audit-reports"],
