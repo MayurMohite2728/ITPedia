@@ -29,6 +29,7 @@ import {
   Shield,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import "./NavigationLayout.css";
 
 const IntegrationConfiguration = () => {
   const { toast } = useToast();
@@ -58,24 +59,6 @@ const IntegrationConfiguration = () => {
 
   const [editingConfig, setEditingConfig] = useState(null);
   const [isTestingConnection, setIsTestingConnection] = useState(null);
-
-  // const eaTools = [
-  //   { value: "abacus", label: "Avolution Abacus" },
-  //   { value: "alfabet", label: "Software AG Alfabet" },
-  //   { value: "archimate", label: "BiZZdesign Enterprise Studio" },
-  //   { value: "mega", label: "MEGA HOPEX" },
-  //   { value: "cmbd", label: "CMBD" },
-  //   { value: "siem", label: "SIEM" },
-  //   { value: "techlib", label: "Technology Library" },
-  //   { value: "datatools", label: "Data Classification tools" },
-  //   { value: "sparx", label: "Sparx Enterprise Architect" },
-  // ];
-
-  // const providers = [
-  //   { value: "itpedia", label: "IT-Pedia MyProducts" },
-  //   { value: "flexera", label: "Flexera Software Vulnerability Manager" },
-  //   { value: "servicenow", label: "ServiceNow IT Operations Management" },
-  // ];
 
   const eaTools = [
     { value: "abacus", label: "Avolution Abacus" },
@@ -122,9 +105,7 @@ const IntegrationConfiguration = () => {
 
   const handleTestConnection = async (configId) => {
     setIsTestingConnection(configId);
-
     await new Promise((resolve) => setTimeout(resolve, 2000));
-
     setConfigs((prev) =>
       prev.map((c) =>
         c.id === configId
@@ -132,7 +113,6 @@ const IntegrationConfiguration = () => {
           : c
       )
     );
-
     setIsTestingConnection(null);
     toast({
       title: "Connection Test Successful",
@@ -140,185 +120,168 @@ const IntegrationConfiguration = () => {
     });
   };
 
-  const renderConfigForm = (config, isNew = false) => (
-    <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Settings className="h-5 w-5" />
-          {isNew ? "Add New Integration" : `Configure ${config.name}`}
-        </CardTitle>
-        <CardDescription>
-          Set up authentication and connection details
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {isNew && (
+  const renderConfigForm = (config, isNew = false) => {
+    // Choose list based on type
+    const options = config.type === "ea-tool" ? eaTools : providers;
+
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Settings className="h-5 w-5" />
+            {isNew ? "Add New Integration" : `Configure ${config.name}`}
+          </CardTitle>
+          <CardDescription>
+            Set up authentication and connection details
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {isNew && (
+            <div className="space-y-2">
+              <Label htmlFor="tool-select">Select Tool/Provider</Label>
+              <Select
+                value={config.name}
+                onValueChange={(value) => {
+                  const selected = options.find((t) => t.value === value);
+                  if (selected) {
+                    setEditingConfig({
+                      ...config,
+                      id: value,
+                      name: selected.label,
+                    });
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Choose integration..." />
+                </SelectTrigger>
+                <SelectContent className="bg-white text-gray-900">
+                  {options.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+
           <div className="space-y-2">
-            <Label htmlFor="tool-select">Select Tool/Provider</Label>
-            <Select
-              value={config.name}
-              onValueChange={(value) => {
-                const tool = [...eaTools, ...providers].find(
-                  (t) => t.value === value
-                );
-                if (tool) {
-                  setEditingConfig({
-                    ...config,
-                    id: value,
-                    name: tool.label,
-                    type: eaTools.find((t) => t.value === value)
-                      ? "ea-tool"
-                      : "provider",
-                  });
-                }
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Choose integration..." />
-              </SelectTrigger>
-              <SelectContent className="bg-white text-gray-900">
-                <SelectItem
-                  disabled
-                  value="ea-tools-header"
-                  className="font-semibold"
-                >
-                  EA Tools
-                </SelectItem>
-                {eaTools.map((tool) => (
-                  <SelectItem key={tool.value} value={tool.value}>
-                    {tool.label}
-                  </SelectItem>
-                ))}
-                <SelectItem
-                  disabled
-                  value="providers-header"
-                  className="font-semibold mt-2"
-                >
-                  Normalization Providers
-                </SelectItem>
-                {providers.map((provider) => (
-                  <SelectItem key={provider.value} value={provider.value}>
-                    {provider.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        )}
-
-        <div className="space-y-2">
-          <Label htmlFor="url">API URL</Label>
-          <div className="relative">
-            <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-            <Input
-              id="url"
-              placeholder="https://api.example.com"
-              value={config.url}
-              onChange={(e) =>
-                setEditingConfig((prev) =>
-                  prev ? { ...prev, url: e.target.value } : null
-                )
-              }
-              className="pl-10"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="auth-type">Authentication Type</Label>
-          <Select
-            value={config.authType}
-            onValueChange={(value) =>
-              setEditingConfig((prev) =>
-                prev ? { ...prev, authType: value } : null
-              )
-            }
-          >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="api-key">API Key</SelectItem>
-              <SelectItem value="basic">Basic Authentication</SelectItem>
-              <SelectItem value="oauth">OAuth 2.0</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {config.authType === "api-key" && (
-          <div className="space-y-2">
-            <Label htmlFor="api-key">API Key</Label>
+            <Label htmlFor="url">API URL</Label>
             <div className="relative">
-              <Key className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
               <Input
-                id="api-key"
-                type="password"
-                placeholder="Enter API key..."
-                value={config.apiKey || ""}
+                id="url"
+                placeholder="https://api.example.com"
+                value={config.url}
                 onChange={(e) =>
                   setEditingConfig((prev) =>
-                    prev ? { ...prev, apiKey: e.target.value } : null
+                    prev ? { ...prev, url: e.target.value } : null
                   )
                 }
                 className="pl-10"
               />
             </div>
           </div>
-        )}
 
-        {config.authType === "basic" && (
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="username">Username</Label>
-              <Input
-                id="username"
-                value={config.username || ""}
-                onChange={(e) =>
-                  setEditingConfig((prev) =>
-                    prev ? { ...prev, username: e.target.value } : null
-                  )
-                }
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                value={config.password || ""}
-                onChange={(e) =>
-                  setEditingConfig((prev) =>
-                    prev ? { ...prev, password: e.target.value } : null
-                  )
-                }
-              />
-            </div>
-          </div>
-        )}
-
-        <div className="flex gap-2 pt-4">
-          <Button onClick={() => config && handleSaveConfig(config)}>
-            Save Configuration
-          </Button>
-          <Button variant="outline" onClick={() => setEditingConfig(null)}>
-            Cancel
-          </Button>
-          {!isNew && (
-            <Button
-              variant="outline"
-              onClick={() => handleTestConnection(config.id)}
-              disabled={isTestingConnection === config.id}
+          <div className="space-y-2">
+            <Label htmlFor="auth-type">Authentication Type</Label>
+            <Select
+              value={config.authType}
+              onValueChange={(value) =>
+                setEditingConfig((prev) =>
+                  prev ? { ...prev, authType: value } : null
+                )
+              }
             >
-              <TestTube className="h-4 w-4 mr-2" />
-              {isTestingConnection === config.id
-                ? "Testing..."
-                : "Test Connection"}
-            </Button>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="api-key">API Key</SelectItem>
+                <SelectItem value="basic">Basic Authentication</SelectItem>
+                <SelectItem value="oauth">OAuth 2.0</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {config.authType === "api-key" && (
+            <div className="space-y-2">
+              <Label htmlFor="api-key">API Key</Label>
+              <div className="relative">
+                <Key className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="api-key"
+                  type="password"
+                  placeholder="Enter API key..."
+                  value={config.apiKey || ""}
+                  onChange={(e) =>
+                    setEditingConfig((prev) =>
+                      prev ? { ...prev, apiKey: e.target.value } : null
+                    )
+                  }
+                  className="pl-10"
+                />
+              </div>
+            </div>
           )}
-        </div>
-      </CardContent>
-    </Card>
-  );
+
+          {config.authType === "basic" && (
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="username">Username</Label>
+                <Input
+                  id="username"
+                  value={config.username || ""}
+                  onChange={(e) =>
+                    setEditingConfig((prev) =>
+                      prev ? { ...prev, username: e.target.value } : null
+                    )
+                  }
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  value={config.password || ""}
+                  onChange={(e) =>
+                    setEditingConfig((prev) =>
+                      prev ? { ...prev, password: e.target.value } : null
+                    )
+                  }
+                />
+              </div>
+            </div>
+          )}
+
+          <div className="flex gap-2 pt-4">
+            <Button
+              onClick={() => editingConfig && handleSaveConfig(editingConfig)}
+            >
+              Save Configuration
+            </Button>
+            <Button variant="outline" onClick={() => setEditingConfig(null)}>
+              Cancel
+            </Button>
+            {!isNew && (
+              <Button
+                variant="outline"
+                onClick={() => handleTestConnection(config.id)}
+                disabled={isTestingConnection === config.id}
+              >
+                <TestTube className="h-4 w-4 mr-2" />
+                {isTestingConnection === config.id
+                  ? "Testing..."
+                  : "Test Connection"}
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    );
+  };
 
   const renderIntegrationList = (type) => {
     const filteredConfigs = configs.filter((c) => c.type === type);

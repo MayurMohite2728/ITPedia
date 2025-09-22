@@ -46,5 +46,21 @@ button[data-state="active"] {
   color: white;
 }
 .bg-blue-250{
-    background-color:#5586af;
+    background-color: rgb(3 46 82);
+}
+.hover\:bg-blue-300:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgb(3 46 82)!important;
+}
+.data-\[state\=active\]\:bg-background[data-state="active"] {
+    background-color: hsl(var(--background, 0 0% 100%));
+    background-color: #ffffff!important;
+}
+.text-primary-foreground {
+    color: #ffffff !important;
+} 
+
+
+[data-lov-name="SelectContent"] {
+  background-color: white !important;
 }

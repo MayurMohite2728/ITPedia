@@ -2,6 +2,8 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "./StatusBadge";
+import { RecipientsConfigurationDialog } from "./RecipientsConfigurationDialog";
+import { useState } from "react";
 
 import {
   AlertTriangle,
@@ -52,6 +54,8 @@ export const RiskMonitoringPanel = ({ alerts = [] }) => {
   //     status: "in-progress",
   //   },
   // ];
+
+  const [isRecipientsDialogOpen, setIsRecipientsDialogOpen] = useState(false);
 
   const mockAlerts = {
     "@odata.context":
@@ -354,6 +358,20 @@ export const RiskMonitoringPanel = ({ alerts = [] }) => {
     }
   };
 
+  const getScoreStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case "low":
+        return "text-success bg-success/10 border-success/20";
+      case "medium":
+        return "text-primary bg-primary/10 border-primary/20";
+      case "high":
+        return "text-danger bg-danger/10 border-danger/20";
+      case "critical":
+        return "text-warning bg-warning/10 border-warning/20";
+      default:
+        return "text-success bg-success/10 border";
+    }
+  };
   const handleNotifyClick = (csv) => {
     window.location.href = `mailto:abc@company.com?subject=Report&body=Please%20refer%20this%20link:%20:%20https://nvd.nist.gov/vuln/detail/${csv}`;
   };
@@ -394,13 +412,24 @@ export const RiskMonitoringPanel = ({ alerts = [] }) => {
                 >
                   {getAlertIcon(alert.type)}
                 </div>  */}
-
+                {/* 
                 <div
                   className={`p-2 rounded-md border ${getSeverityColor(
                     alert.cvsS2_ScoreStatus
                   )}`}
                 >
                   {getAlertIcon(alert.type)}
+                </div> */}
+
+                <div
+                  className={`p-2 rounded-md border ${getScoreStatusColor(
+                    alert.cvsS2_ScoreStatus
+                  )}`}
+                >
+                  {getAlertIcon(
+                    alert.type,
+                    getScoreStatusColor(alert.cvsS2_ScoreStatus)
+                  )}
                 </div>
 
                 <div className="flex-1">
@@ -442,9 +471,20 @@ export const RiskMonitoringPanel = ({ alerts = [] }) => {
               >
                 {alert.status}
               </StatusBadge> */}
+              {/* <Badge
+                variant="outline"
+                className={getScoreStatusColor(alert.vsS2_ScoreStatus)}
+              >
+               
+                {getAlertIcon(
+                  alert.type,
+                  getScoreStatusColor(alert.cvsS2_ScoreStatus)
+                )}
+              </Badge>   */}
+
               <Badge
                 variant="outline"
-                className={getSeverityColor(alert.vsS2_ScoreStatus)}
+                className={getScoreStatusColor(alert.cvsS2_ScoreStatus)}
               >
                 {alert.cvsS2_ScoreStatus}
               </Badge>
@@ -561,12 +601,21 @@ export const RiskMonitoringPanel = ({ alerts = [] }) => {
               email
             </p>
           </div>
-          <Button variant="outline" size="sm">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsRecipientsDialogOpen(true)}
+          >
             <Mail className="h-4 w-4 mr-2" />
             Configure Recipients
           </Button>
         </div>
       </div>
+      <RecipientsConfigurationDialog
+        open={isRecipientsDialogOpen}
+        onOpenChange={setIsRecipientsDialogOpen}
+        type="risk"
+      />
     </Card>
   );
 };

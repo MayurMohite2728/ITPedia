@@ -4,22 +4,35 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "./StatusBadge";
 import { Progress } from "@/components/ui/progress";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { 
-  Server, 
-  CheckCircle, 
-  AlertCircle, 
+import { ScheduleConfigurationDialog } from "@/components/ScheduleConfigurationDialog";
+import {
+  Server,
+  CheckCircle,
+  AlertCircle,
   RefreshCw,
   TrendingUp,
   Calendar,
   Shield,
   Edit3,
   HardDrive,
-  Network
+  Network,
 } from "lucide-react";
 
 export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
@@ -28,6 +41,7 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
   const [selectedInfrastructure, setSelectedInfrastructure] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isSyncingAll, setIsSyncingAll] = useState(false);
+  const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const mockInfrastructure = [
@@ -97,35 +111,52 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
     },
   ];
 
-  const displayInfrastructure = infrastructure.length > 0 ? infrastructure : mockInfrastructure;
-  const normalizedCount = displayInfrastructure.filter(i => i.status === "normalized").length;
-  const normalizationRate = (normalizedCount / displayInfrastructure.length) * 100;
+  const displayInfrastructure =
+    infrastructure.length > 0 ? infrastructure : mockInfrastructure;
+  const normalizedCount = displayInfrastructure.filter(
+    (i) => i.status === "normalized"
+  ).length;
+  const normalizationRate =
+    (normalizedCount / displayInfrastructure.length) * 100;
 
   const getTypeIcon = (type) => {
     switch (type) {
-      case "server": return <Server className="h-4 w-4" />;
-      case "database": return <HardDrive className="h-4 w-4" />;
-      case "network": return <Network className="h-4 w-4" />;
-      case "storage": return <HardDrive className="h-4 w-4" />;
-      case "virtualization": return <Server className="h-4 w-4" />;
-      default: return <Server className="h-4 w-4" />;
+      case "server":
+        return <Server className="h-4 w-4" />;
+      case "database":
+        return <HardDrive className="h-4 w-4" />;
+      case "network":
+        return <Network className="h-4 w-4" />;
+      case "storage":
+        return <HardDrive className="h-4 w-4" />;
+      case "virtualization":
+        return <Server className="h-4 w-4" />;
+      default:
+        return <Server className="h-4 w-4" />;
     }
   };
 
   const getSecurityIcon = (status) => {
     switch (status) {
-      case "secure": return <Shield className="h-4 w-4 text-success" />;
-      case "vulnerable": return <AlertCircle className="h-4 w-4 text-destructive" />;
-      default: return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
+      case "secure":
+        return <Shield className="h-4 w-4 text-success" />;
+      case "vulnerable":
+        return <AlertCircle className="h-4 w-4 text-destructive" />;
+      default:
+        return <AlertCircle className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
   const getStatusIcon = (status) => {
     switch (status) {
-      case "normalized": return <CheckCircle className="h-4 w-4 text-success" />;
-      case "error": return <AlertCircle className="h-4 w-4 text-destructive" />;
-      case "manual-review": return <AlertCircle className="h-4 w-4 text-warning" />;
-      default: return <RefreshCw className="h-4 w-4 text-muted-foreground" />;
+      case "normalized":
+        return <CheckCircle className="h-4 w-4 text-success" />;
+      case "error":
+        return <AlertCircle className="h-4 w-4 text-destructive" />;
+      case "manual-review":
+        return <AlertCircle className="h-4 w-4 text-warning" />;
+      default:
+        return <RefreshCw className="h-4 w-4 text-muted-foreground" />;
     }
   };
 
@@ -146,10 +177,18 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
   const handleSyncAll = async () => {
     setIsSyncingAll(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      toast({ title: "Sync Complete", description: "All infrastructure components have been synchronized with IT-Pedia." });
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      toast({
+        title: "Sync Complete",
+        description:
+          "All infrastructure components have been synchronized with IT-Pedia.",
+      });
     } catch (error) {
-      toast({ title: "Sync Failed", description: "Failed to synchronize with IT-Pedia. Please try again.", variant: "destructive" });
+      toast({
+        title: "Sync Failed",
+        description: "Failed to synchronize with IT-Pedia. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsSyncingAll(false);
     }
@@ -159,12 +198,19 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
     if (!selectedInfrastructure) return;
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      toast({ title: "Infrastructure Updated", description: `${selectedInfrastructure.normalizedName} has been updated and synced with IT-Pedia.` });
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      toast({
+        title: "Infrastructure Updated",
+        description: `${selectedInfrastructure.normalizedName} has been updated and synced with IT-Pedia.`,
+      });
       setIsReviewDialogOpen(false);
       setSelectedInfrastructure(null);
     } catch (error) {
-      toast({ title: "Update Failed", description: "Failed to update infrastructure. Please try again.", variant: "destructive" });
+      toast({
+        title: "Update Failed",
+        description: "Failed to update infrastructure. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -173,10 +219,18 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
   const handleSyncIndividual = async (itemId) => {
     setIsLoading(true);
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      toast({ title: "Infrastructure Synced", description: "Infrastructure component has been synchronized with IT-Pedia." });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      toast({
+        title: "Infrastructure Synced",
+        description:
+          "Infrastructure component has been synchronized with IT-Pedia.",
+      });
     } catch (error) {
-      toast({ title: "Sync Failed", description: "Failed to sync infrastructure. Please try again.", variant: "destructive" });
+      toast({
+        title: "Sync Failed",
+        description: "Failed to sync infrastructure. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setIsLoading(false);
     }
@@ -189,18 +243,26 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
         <Card className="p-4 bg-gradient-card shadow-card">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Normalization Rate</p>
-              <p className="text-2xl font-bold">{normalizationRate.toFixed(1)}%</p>
+              <p className="text-sm text-muted-foreground">
+                Normalization Rate
+              </p>
+              <p className="text-2xl font-bold">
+                {normalizationRate.toFixed(1)}%
+              </p>
             </div>
             <TrendingUp className="h-8 w-8 text-success" />
           </div>
-          <Progress value={normalizationRate} className="mt-2" />
+          <Progress value={normalizationRate} className="mt-2 bg-secondary" />
         </Card>
         <Card className="p-4 bg-gradient-card shadow-card">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-muted-foreground">Total Infrastructure</p>
-              <p className="text-2xl font-bold">{displayInfrastructure.length}</p>
+              <p className="text-sm text-muted-foreground">
+                Total Infrastructure
+              </p>
+              <p className="text-2xl font-bold">
+                {displayInfrastructure.length}
+              </p>
             </div>
             <Server className="h-8 w-8 text-primary" />
           </div>
@@ -210,7 +272,11 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
             <div>
               <p className="text-sm text-muted-foreground">Security Risks</p>
               <p className="text-2xl font-bold text-destructive">
-                {displayInfrastructure.filter(i => i.securityStatus === "vulnerable").length}
+                {
+                  displayInfrastructure.filter(
+                    (i) => i.securityStatus === "vulnerable"
+                  ).length
+                }
               </p>
             </div>
             <AlertCircle className="h-8 w-8 text-destructive" />
@@ -221,7 +287,11 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
             <div>
               <p className="text-sm text-muted-foreground">Non-Compliant</p>
               <p className="text-2xl font-bold text-warning">
-                {displayInfrastructure.filter(i => i.complianceStatus === "non-compliant").length}
+                {
+                  displayInfrastructure.filter(
+                    (i) => i.complianceStatus === "non-compliant"
+                  ).length
+                }
               </p>
             </div>
             <Shield className="h-8 w-8 text-warning" />
@@ -231,28 +301,30 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
 
       {/* Infrastructure Table & Dialogs */}
       {/* ... The rest remains mostly the same JSX code without TypeScript types ... */}
-    <Card className="p-6 bg-gradient-card shadow-card">
+      <Card className="p-6 bg-gradient-card shadow-card">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-semibold">Golden Infrastructure Library</h3>
+            <h3 className="text-lg font-semibold">
+              Golden Infrastructure Library
+            </h3>
             <p className="text-sm text-muted-foreground">
-              Standardized infrastructure components and lifecycle data from IT-Pedia
+              Standardized infrastructure components and lifecycle data from
+              IT-Pedia
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
               onClick={handleSyncAll}
               disabled={isSyncingAll}
             >
-              <RefreshCw className={`h-4 w-4 mr-2 ${isSyncingAll ? 'animate-spin' : ''}`} />
-              {isSyncingAll ? 'Syncing...' : 'Sync Now'}
+              <RefreshCw
+                className={`h-4 w-4 mr-2 ${isSyncingAll ? "animate-spin" : ""}`}
+              />
+              {isSyncingAll ? "Syncing..." : "Sync Now"}
             </Button>
-            <Button 
-              size="sm"
-              onClick={handleViewDetails}
-            >
+            <Button size="sm" onClick={handleViewDetails}>
               View Full Library
             </Button>
           </div>
@@ -281,7 +353,7 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                       </div>
                     </div>
                   </div>
-                  
+
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-3">
                     <div>
                       <p className="text-xs text-muted-foreground mb-1">Type</p>
@@ -289,42 +361,58 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                         {item.type}
                       </Badge>
                     </div>
-                    
+
                     <div>
-                      <p className="text-xs text-muted-foreground mb-1">Lifecycle Status</p>
+                      <p className="text-xs text-muted-foreground mb-1">
+                        Lifecycle Status
+                      </p>
                       <div className="flex items-center gap-2">
                         <Calendar className="h-3 w-3" />
                         <span className="text-sm">
-                          EOS: {item.lifecycle.endOfSupport ? 
-                            new Date(item.lifecycle.endOfSupport).getFullYear() : 
-                            'Unknown'
-                          }
+                          EOS:{" "}
+                          {item.lifecycle.endOfSupport
+                            ? new Date(
+                                item.lifecycle.endOfSupport
+                              ).getFullYear()
+                            : "Unknown"}
                         </span>
                       </div>
                     </div>
-                    
+
                     <div>
-                      <p className="text-xs text-muted-foreground mb-1">Security Status</p>
+                      <p className="text-xs text-muted-foreground mb-1">
+                        Security Status
+                      </p>
                       <div className="flex items-center gap-2">
                         {getSecurityIcon(item.securityStatus)}
-                        <span className="text-sm capitalize">{item.securityStatus}</span>
+                        <span className="text-sm capitalize">
+                          {item.securityStatus}
+                        </span>
                       </div>
                     </div>
-                    
+
                     <div>
-                      <p className="text-xs text-muted-foreground mb-1">Compliance</p>
+                      <p className="text-xs text-muted-foreground mb-1">
+                        Compliance
+                      </p>
                       <div className="flex items-center gap-2">
-                        <Shield className={`h-3 w-3 ${
-                          item.complianceStatus === 'compliant' ? 'text-success' : 
-                          item.complianceStatus === 'non-compliant' ? 'text-destructive' : 
-                          'text-muted-foreground'
-                        }`} />
-                        <span className="text-sm capitalize">{item.complianceStatus}</span>
+                        <Shield
+                          className={`h-3 w-3 ${
+                            item.complianceStatus === "compliant"
+                              ? "text-success"
+                              : item.complianceStatus === "non-compliant"
+                              ? "text-destructive"
+                              : "text-muted-foreground"
+                          }`}
+                        />
+                        <span className="text-sm capitalize">
+                          {item.complianceStatus}
+                        </span>
                       </div>
                     </div>
                   </div>
                 </div>
-                
+
                 <div className="flex flex-col items-end gap-2">
                   <div className="flex items-center gap-2">
                     {item.status === "manual-review" && (
@@ -352,15 +440,21 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                         disabled={isLoading}
                         className="text-xs px-2 py-1 h-auto"
                       >
-                        <RefreshCw className={`h-3 w-3 ${isLoading ? 'animate-spin' : ''}`} />
+                        <RefreshCw
+                          className={`h-3 w-3 ${
+                            isLoading ? "animate-spin" : ""
+                          }`}
+                        />
                       </Button>
                     )}
                   </div>
-                  <StatusBadge 
+                  <StatusBadge
                     status={
-                      item.status === "normalized" ? "synced" : 
-                      item.status === "error" ? "error" : 
-                      "pending"
+                      item.status === "normalized"
+                        ? "synced"
+                        : item.status === "error"
+                        ? "error"
+                        : "pending"
                     }
                   >
                     {item.status}
@@ -379,12 +473,17 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
             <div>
               <h5 className="font-medium">Automatic Enrichment Schedule</h5>
               <p className="text-sm text-muted-foreground">
-                Hourly synchronization with IT-Pedia for updated lifecycle, security and compliance data
+                Hourly synchronization with IT-Pedia for updated lifecycle,
+                security and compliance data
               </p>
             </div>
             <div className="flex items-center gap-2">
               <StatusBadge status="synced">Next sync in 18 min</StatusBadge>
-              <Button variant="outline" size="sm">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsScheduleDialogOpen(true)}
+              >
                 Configure Schedule
               </Button>
             </div>
@@ -398,7 +497,7 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
           <DialogHeader>
             <DialogTitle>Manual Infrastructure Review</DialogTitle>
           </DialogHeader>
-          
+
           {selectedInfrastructure && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -407,10 +506,12 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                   <Input
                     id="original-name"
                     value={selectedInfrastructure.originalName}
-                    onChange={(e) => setSelectedInfrastructure({
-                      ...selectedInfrastructure,
-                      originalName: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setSelectedInfrastructure({
+                        ...selectedInfrastructure,
+                        originalName: e.target.value,
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -418,37 +519,40 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                   <Input
                     id="normalized-name"
                     value={selectedInfrastructure.normalizedName}
-                    onChange={(e) => setSelectedInfrastructure({
-                      ...selectedInfrastructure,
-                      normalizedName: e.target.value
-                    })}
+                    onChange={(e) =>
+                      setSelectedInfrastructure({
+                        ...selectedInfrastructure,
+                        normalizedName: e.target.value,
+                      })
+                    }
                   />
                 </div>
               </div>
 
               <div>
                 <Label htmlFor="type">Infrastructure Type</Label>
-               <Select
-  value={selectedInfrastructure.type}
-  onValueChange={(value) =>
-    setSelectedInfrastructure({
-      ...selectedInfrastructure,
-      type: value,
-    })
-  }
->
-  <SelectTrigger>
-    <SelectValue />
-  </SelectTrigger>
-  <SelectContent>
-    <SelectItem value="server">Server</SelectItem>
-    <SelectItem value="database">Database</SelectItem>
-    <SelectItem value="network">Network</SelectItem>
-    <SelectItem value="storage">Storage</SelectItem>
-    <SelectItem value="virtualization">Virtualization</SelectItem>
-  </SelectContent>
-</Select>
-
+                <Select
+                  value={selectedInfrastructure.type}
+                  onValueChange={(value) =>
+                    setSelectedInfrastructure({
+                      ...selectedInfrastructure,
+                      type: value,
+                    })
+                  }
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="server">Server</SelectItem>
+                    <SelectItem value="database">Database</SelectItem>
+                    <SelectItem value="network">Network</SelectItem>
+                    <SelectItem value="storage">Storage</SelectItem>
+                    <SelectItem value="virtualization">
+                      Virtualization
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
               <div className="grid grid-cols-3 gap-4">
@@ -457,14 +561,18 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                   <Input
                     id="ga-date"
                     type="date"
-                    value={selectedInfrastructure.lifecycle.generalAvailability || ''}
-                    onChange={(e) => setSelectedInfrastructure({
-                      ...selectedInfrastructure,
-                      lifecycle: {
-                        ...selectedInfrastructure.lifecycle,
-                        generalAvailability: e.target.value
-                      }
-                    })}
+                    value={
+                      selectedInfrastructure.lifecycle.generalAvailability || ""
+                    }
+                    onChange={(e) =>
+                      setSelectedInfrastructure({
+                        ...selectedInfrastructure,
+                        lifecycle: {
+                          ...selectedInfrastructure.lifecycle,
+                          generalAvailability: e.target.value,
+                        },
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -472,14 +580,16 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                   <Input
                     id="eos-date"
                     type="date"
-                    value={selectedInfrastructure.lifecycle.endOfSupport || ''}
-                    onChange={(e) => setSelectedInfrastructure({
-                      ...selectedInfrastructure,
-                      lifecycle: {
-                        ...selectedInfrastructure.lifecycle,
-                        endOfSupport: e.target.value
-                      }
-                    })}
+                    value={selectedInfrastructure.lifecycle.endOfSupport || ""}
+                    onChange={(e) =>
+                      setSelectedInfrastructure({
+                        ...selectedInfrastructure,
+                        lifecycle: {
+                          ...selectedInfrastructure.lifecycle,
+                          endOfSupport: e.target.value,
+                        },
+                      })
+                    }
                   />
                 </div>
                 <div>
@@ -487,14 +597,16 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                   <Input
                     id="eol-date"
                     type="date"
-                    value={selectedInfrastructure.lifecycle.endOfLife || ''}
-                    onChange={(e) => setSelectedInfrastructure({
-                      ...selectedInfrastructure,
-                      lifecycle: {
-                        ...selectedInfrastructure.lifecycle,
-                        endOfLife: e.target.value
-                      }
-                    })}
+                    value={selectedInfrastructure.lifecycle.endOfLife || ""}
+                    onChange={(e) =>
+                      setSelectedInfrastructure({
+                        ...selectedInfrastructure,
+                        lifecycle: {
+                          ...selectedInfrastructure.lifecycle,
+                          endOfLife: e.target.value,
+                        },
+                      })
+                    }
                   />
                 </div>
               </div>
@@ -502,47 +614,47 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="security-status">Security Status</Label>
-                 <Select
-  value={selectedInfrastructure.securityStatus}
-  onValueChange={(value) =>
-    setSelectedInfrastructure({
-      ...selectedInfrastructure,
-      securityStatus: value,
-    })
-  }
->
-  <SelectTrigger>
-    <SelectValue />
-  </SelectTrigger>
-  <SelectContent>
-    <SelectItem value="secure">Secure</SelectItem>
-    <SelectItem value="vulnerable">Vulnerable</SelectItem>
-    <SelectItem value="unknown">Unknown</SelectItem>
-  </SelectContent>
-</Select>
-
+                  <Select
+                    value={selectedInfrastructure.securityStatus}
+                    onValueChange={(value) =>
+                      setSelectedInfrastructure({
+                        ...selectedInfrastructure,
+                        securityStatus: value,
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="secure">Secure</SelectItem>
+                      <SelectItem value="vulnerable">Vulnerable</SelectItem>
+                      <SelectItem value="unknown">Unknown</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <Label htmlFor="compliance-status">Compliance Status</Label>
-                 <Select
-  value={selectedInfrastructure.complianceStatus}
-  onValueChange={(value) =>
-    setSelectedInfrastructure({
-      ...selectedInfrastructure,
-      complianceStatus: value,
-    })
-  }
->
-  <SelectTrigger>
-    <SelectValue />
-  </SelectTrigger>
-  <SelectContent>
-    <SelectItem value="compliant">Compliant</SelectItem>
-    <SelectItem value="non-compliant">Non-Compliant</SelectItem>
-    <SelectItem value="unknown">Unknown</SelectItem>
-  </SelectContent>
-</Select>
-
+                  <Select
+                    value={selectedInfrastructure.complianceStatus}
+                    onValueChange={(value) =>
+                      setSelectedInfrastructure({
+                        ...selectedInfrastructure,
+                        complianceStatus: value,
+                      })
+                    }
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="compliant">Compliant</SelectItem>
+                      <SelectItem value="non-compliant">
+                        Non-Compliant
+                      </SelectItem>
+                      <SelectItem value="unknown">Unknown</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </div>
@@ -556,11 +668,8 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
             >
               Cancel
             </Button>
-            <Button
-              onClick={handleSaveManualReview}
-              disabled={isLoading}
-            >
-              {isLoading ? 'Saving...' : 'Save & Sync'}
+            <Button onClick={handleSaveManualReview} disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save & Sync"}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -571,10 +680,12 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
         <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>
-              {selectedInfrastructure ? `${selectedInfrastructure.normalizedName} Details` : 'Infrastructure Library'}
+              {selectedInfrastructure
+                ? `${selectedInfrastructure.normalizedName} Details`
+                : "Infrastructure Library"}
             </DialogTitle>
           </DialogHeader>
-          
+
           {selectedInfrastructure ? (
             <div className="space-y-6">
               <div className="grid grid-cols-2 gap-6">
@@ -582,93 +693,140 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                   <h4 className="font-semibold mb-3">Basic Information</h4>
                   <div className="space-y-2">
                     <div>
-                      <span className="text-sm text-muted-foreground">Normalized Name:</span>
-                      <p className="font-medium">{selectedInfrastructure.normalizedName}</p>
+                      <span className="text-sm text-muted-foreground">
+                        Normalized Name:
+                      </span>
+                      <p className="font-medium">
+                        {selectedInfrastructure.normalizedName}
+                      </p>
                     </div>
                     <div>
-                      <span className="text-sm text-muted-foreground">Original Name:</span>
+                      <span className="text-sm text-muted-foreground">
+                        Original Name:
+                      </span>
                       <p>{selectedInfrastructure.originalName}</p>
                     </div>
                     <div>
-                      <span className="text-sm text-muted-foreground">Type:</span>
+                      <span className="text-sm text-muted-foreground">
+                        Type:
+                      </span>
                       <Badge variant="secondary" className="ml-2 capitalize">
                         {selectedInfrastructure.type}
                       </Badge>
                     </div>
                     <div>
-                      <span className="text-sm text-muted-foreground">Source:</span>
+                      <span className="text-sm text-muted-foreground">
+                        Source:
+                      </span>
                       <p>{selectedInfrastructure.source}</p>
                     </div>
                   </div>
                 </div>
-                
+
                 <div>
                   <h4 className="font-semibold mb-3">Status Information</h4>
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">Normalization Status:</span>
-                      <StatusBadge status={selectedInfrastructure.status === "normalized" ? "synced" : "pending"}>
+                      <span className="text-sm text-muted-foreground">
+                        Normalization Status:
+                      </span>
+                      <StatusBadge
+                        status={
+                          selectedInfrastructure.status === "normalized"
+                            ? "synced"
+                            : "pending"
+                        }
+                      >
                         {selectedInfrastructure.status}
                       </StatusBadge>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">Security:</span>
+                      <span className="text-sm text-muted-foreground">
+                        Security:
+                      </span>
                       {getSecurityIcon(selectedInfrastructure.securityStatus)}
-                      <span className="capitalize">{selectedInfrastructure.securityStatus}</span>
+                      <span className="capitalize">
+                        {selectedInfrastructure.securityStatus}
+                      </span>
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="text-sm text-muted-foreground">Compliance:</span>
-                      <Shield className={`h-4 w-4 ${
-                        selectedInfrastructure.complianceStatus === 'compliant' ? 'text-success' : 
-                        selectedInfrastructure.complianceStatus === 'non-compliant' ? 'text-destructive' : 
-                        'text-muted-foreground'
-                      }`} />
-                      <span className="capitalize">{selectedInfrastructure.complianceStatus}</span>
+                      <span className="text-sm text-muted-foreground">
+                        Compliance:
+                      </span>
+                      <Shield
+                        className={`h-4 w-4 ${
+                          selectedInfrastructure.complianceStatus ===
+                          "compliant"
+                            ? "text-success"
+                            : selectedInfrastructure.complianceStatus ===
+                              "non-compliant"
+                            ? "text-destructive"
+                            : "text-muted-foreground"
+                        }`}
+                      />
+                      <span className="capitalize">
+                        {selectedInfrastructure.complianceStatus}
+                      </span>
                     </div>
                     <div>
-                      <span className="text-sm text-muted-foreground">Last Updated:</span>
-                      <p>{new Date(selectedInfrastructure.lastUpdated).toLocaleString()}</p>
+                      <span className="text-sm text-muted-foreground">
+                        Last Updated:
+                      </span>
+                      <p>
+                        {new Date(
+                          selectedInfrastructure.lastUpdated
+                        ).toLocaleString()}
+                      </p>
                     </div>
                   </div>
                 </div>
               </div>
-              
+
               <div>
                 <h4 className="font-semibold mb-3">Lifecycle Information</h4>
                 <div className="grid grid-cols-3 gap-4">
                   <Card className="p-3">
                     <div className="text-center">
                       <Calendar className="h-6 w-6 mx-auto mb-2 text-success" />
-                      <p className="text-sm text-muted-foreground">General Availability</p>
+                      <p className="text-sm text-muted-foreground">
+                        General Availability
+                      </p>
                       <p className="font-medium">
-                        {selectedInfrastructure.lifecycle.generalAvailability ? 
-                          new Date(selectedInfrastructure.lifecycle.generalAvailability).toLocaleDateString() : 
-                          'Unknown'
-                        }
+                        {selectedInfrastructure.lifecycle.generalAvailability
+                          ? new Date(
+                              selectedInfrastructure.lifecycle.generalAvailability
+                            ).toLocaleDateString()
+                          : "Unknown"}
                       </p>
                     </div>
                   </Card>
                   <Card className="p-3">
                     <div className="text-center">
                       <Calendar className="h-6 w-6 mx-auto mb-2 text-warning" />
-                      <p className="text-sm text-muted-foreground">End of Support</p>
+                      <p className="text-sm text-muted-foreground">
+                        End of Support
+                      </p>
                       <p className="font-medium">
-                        {selectedInfrastructure.lifecycle.endOfSupport ? 
-                          new Date(selectedInfrastructure.lifecycle.endOfSupport).toLocaleDateString() : 
-                          'Unknown'
-                        }
+                        {selectedInfrastructure.lifecycle.endOfSupport
+                          ? new Date(
+                              selectedInfrastructure.lifecycle.endOfSupport
+                            ).toLocaleDateString()
+                          : "Unknown"}
                       </p>
                     </div>
                   </Card>
                   <Card className="p-3">
                     <div className="text-center">
                       <Calendar className="h-6 w-6 mx-auto mb-2 text-destructive" />
-                      <p className="text-sm text-muted-foreground">End of Life</p>
+                      <p className="text-sm text-muted-foreground">
+                        End of Life
+                      </p>
                       <p className="font-medium">
-                        {selectedInfrastructure.lifecycle.endOfLife ? 
-                          new Date(selectedInfrastructure.lifecycle.endOfLife).toLocaleDateString() : 
-                          'Unknown'
-                        }
+                        {selectedInfrastructure.lifecycle.endOfLife
+                          ? new Date(
+                              selectedInfrastructure.lifecycle.endOfLife
+                            ).toLocaleDateString()
+                          : "Unknown"}
                       </p>
                     </div>
                   </Card>
@@ -683,10 +841,14 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex items-center gap-2">
                         {getTypeIcon(item.type)}
-                        <h5 className="font-semibold text-sm">{item.normalizedName}</h5>
+                        <h5 className="font-semibold text-sm">
+                          {item.normalizedName}
+                        </h5>
                       </div>
-                      <StatusBadge 
-                        status={item.status === "normalized" ? "synced" : "pending"}
+                      <StatusBadge
+                        status={
+                          item.status === "normalized" ? "synced" : "pending"
+                        }
                       />
                     </div>
                     <div className="space-y-2 text-sm">
@@ -700,16 +862,19 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                         <span className="text-muted-foreground">Security:</span>
                         <div className="flex items-center gap-1">
                           {getSecurityIcon(item.securityStatus)}
-                          <span className="capitalize">{item.securityStatus}</span>
+                          <span className="capitalize">
+                            {item.securityStatus}
+                          </span>
                         </div>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">EOS:</span>
                         <span>
-                          {item.lifecycle.endOfSupport ? 
-                            new Date(item.lifecycle.endOfSupport).getFullYear() : 
-                            'Unknown'
-                          }
+                          {item.lifecycle.endOfSupport
+                            ? new Date(
+                                item.lifecycle.endOfSupport
+                              ).getFullYear()
+                            : "Unknown"}
                         </span>
                       </div>
                     </div>
@@ -728,7 +893,12 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
           )}
         </DialogContent>
       </Dialog>
-    
+      {/* Schedule Configuration Dialog */}
+      <ScheduleConfigurationDialog
+        open={isScheduleDialogOpen}
+        onOpenChange={setIsScheduleDialogOpen}
+        type="infrastructure"
+      />
     </div>
   );
 };

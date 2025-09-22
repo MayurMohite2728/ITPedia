@@ -6,6 +6,7 @@ import { StatusBadge } from "./StatusBadge";
 import { Progress } from "@/components/ui/progress";
 import LoadingBar from "react-top-loading-bar";
 import { NavigationLayout } from "./NavigationLayout";
+import { ScheduleConfigurationDialog } from "@/components/ScheduleConfigurationDialog";
 import {
   Dialog,
   DialogContent,
@@ -42,6 +43,7 @@ import {
 
 export const GoldenLibraryPanel = () => {
   const [isReviewDialogOpen, setIsReviewDialogOpen] = useState(false);
+  const [isScheduleDialogOpen, setIsScheduleDialogOpen] = useState(false);
   const [isDetailsDialogOpen, setIsDetailsDialogOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -337,7 +339,7 @@ export const GoldenLibraryPanel = () => {
                 {riskCount && riskCount.total}
               </p>
             </div>
-            <AlertCircle className="h-8 w-8 text-destructive" />
+            <AlertCircle className="h-8 w-8 text-danger" />
           </div>
         </Card>
       </div>
@@ -631,7 +633,11 @@ export const GoldenLibraryPanel = () => {
           </div>
           <div className="flex items-center gap-2">
             <StatusBadge status="synced">Next sync in 23 min</StatusBadge>
-            <Button variant="outline" size="sm">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsScheduleDialogOpen(true)}
+            >
               Configure Schedule
             </Button>
           </div>
@@ -987,6 +993,13 @@ export const GoldenLibraryPanel = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* Schedule Configuration Dialog */}
+      <ScheduleConfigurationDialog
+        open={isScheduleDialogOpen}
+        onOpenChange={setIsScheduleDialogOpen}
+        type="infrastructure"
+      />
     </div>
   );
 };
