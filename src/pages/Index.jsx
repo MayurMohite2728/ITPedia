@@ -158,7 +158,7 @@ const Index = () => {
     },
     {
       label: "Lifecycle Events", //total number of lifecycles api end of support + endOfLife +endOfSale + count value
-      value: totalLifeCycleCount ? totalLifeCycleCount : "notPublished",
+      value: totalLifeCycleCount ? totalLifeCycleCount : "Not Published",
       change: "",
       icon: TrendingUp,
       trend: "info",

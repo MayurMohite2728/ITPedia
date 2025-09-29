@@ -388,9 +388,18 @@ export const RiskMonitoringPanel = ({ alerts = [] }) => {
           <Badge variant="destructive">
             {displayAlerts.filter((a) => a.status === "new").length} New
           </Badge>
-          <Button variant="outline" size="sm">
+          {/* <Button variant="outline" size="sm">
             <Bell className="h-4 w-4 mr-2" />
             Configure Alerts
+          </Button> */}
+
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setIsRecipientsDialogOpen(true)}
+          >
+            <Mail className="h-4 w-4 mr-2" />
+            Configure Recipients
           </Button>
         </div>
       </div>

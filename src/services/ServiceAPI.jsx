@@ -86,26 +86,26 @@ export const getlifeCycle = async () => {
   }
 };
 
-// export const syncAllProduct = async () => {
-//   try {
-//     const response = await fetch(
-//       `https://eimsdemo.mannaicorp.com.qa:8084/itportitepediaservice/api/api/v1/repo-itpedia/products/sync`,
-//       {
-//         method: "POST",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//       }
-//     );
+export const syncAllProduct = async () => {
+  try {
+    const response = await fetch(
+      `https://localhost:8085/itportitepediaservice/api/api/v1/repo-itpedia/products/sync`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-//     if (!response.ok) {
-//       throw new Error(`HTTP error! status: ${response.status}`);
-//     }
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
 
-//     const data = await response.json();
-//     return data;
-//   } catch (error) {
-//     console.error("Error fetching product summary status:", error);
-//     throw error;
-//   }
-// };
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching product summary status:", error);
+    throw error;
+  }
+};

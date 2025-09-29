@@ -20,6 +20,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
+import emailjs from "emailjs-com";
 import {
   Mail,
   Plus,
@@ -99,6 +100,36 @@ export const RecipientsConfigurationDialog = ({
     { value: "audit-reports", label: "Audit Reports" },
   ];
 
+  //  reactjs email
+
+  const sendEmail = (recipient) => {
+    emailjs
+      .send(
+        "service_5rqnh6f",
+        "template_xzu2qli",
+        {
+          email: recipient.email,
+          name: recipient.name,
+          message: `Hello ${recipient.name}, you have been added to the notification list.`,
+        },
+        "5nZr0ojAs2UHFEggq"
+      )
+      .then(() => {
+        toast({
+          title: "Email Sent",
+          description: `Notification email sent to ${recipient.email}.`,
+        });
+      })
+      .catch((err) => {
+        console.error(err);
+        toast({
+          title: "Email Failed",
+          description: "Could not send the notification email.",
+          variant: "destructive",
+        });
+      });
+  };
+
   const handleAddRecipient = () => {
     if (!newRecipient.email || !newRecipient.name) {
       toast({
@@ -130,7 +161,43 @@ export const RecipientsConfigurationDialog = ({
       title: "Recipient Added",
       description: `${recipient.name} has been added to the notification list.`,
     });
+
+    // ✅ Send email automatically
+    sendEmail(recipient);
   };
+
+  // const handleAddRecipient = () => {
+  //   if (!newRecipient.email || !newRecipient.name) {
+  //     toast({
+  //       title: "Missing Information",
+  //       description: "Please provide both email and name for the recipient.",
+  //       variant: "destructive",
+  //     });
+  //     return;
+  //   }
+
+  //   const recipient = {
+  //     id: Date.now().toString(),
+  //     ...newRecipient,
+  //     active: true,
+  //   };
+
+  //   setRecipients([...recipients, recipient]);
+  //   setNewRecipient({
+  //     email: "",
+  //     name: "",
+  //     role: "",
+  //     department: "",
+  //     notificationTypes: [],
+  //     frequency: "daily",
+  //   });
+  //   setShowAddForm(false);
+
+  //   toast({
+  //     title: "Recipient Added",
+  //     description: `${recipient.name} has been added to the notification list.`,
+  //   });
+  // };
 
   const handleRemoveRecipient = (id) => {
     setRecipients(recipients.filter((r) => r.id !== id));

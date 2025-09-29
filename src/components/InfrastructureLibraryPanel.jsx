@@ -89,8 +89,8 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
         endOfSupport: "2025-12-31",
         endOfLife: "2028-12-31",
       },
-      securityStatus: "unknown",
-      complianceStatus: "unknown",
+      securityStatus: "Not Published",
+      complianceStatus: "Not Published",
       lastUpdated: "2024-01-20T10:45:00Z",
     },
     {
@@ -247,7 +247,7 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                 Normalization Rate
               </p>
               <p className="text-2xl font-bold">
-                {normalizationRate.toFixed(1)}%
+                {normalizationRate?.toFixed(1)}%
               </p>
             </div>
             <TrendingUp className="h-8 w-8 text-success" />
@@ -261,7 +261,7 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                 Total Infrastructure
               </p>
               <p className="text-2xl font-bold">
-                {displayInfrastructure.length}
+                {displayInfrastructure?.length}
               </p>
             </div>
             <Server className="h-8 w-8 text-primary" />
@@ -273,7 +273,7 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
               <p className="text-sm text-muted-foreground">Security Risks</p>
               <p className="text-2xl font-bold text-destructive">
                 {
-                  displayInfrastructure.filter(
+                  displayInfrastructure?.filter(
                     (i) => i.securityStatus === "vulnerable"
                   ).length
                 }
@@ -288,7 +288,7 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
               <p className="text-sm text-muted-foreground">Non-Compliant</p>
               <p className="text-2xl font-bold text-warning">
                 {
-                  displayInfrastructure.filter(
+                  displayInfrastructure?.filter(
                     (i) => i.complianceStatus === "non-compliant"
                   ).length
                 }
@@ -331,7 +331,7 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
         </div>
 
         <div className="space-y-3">
-          {displayInfrastructure.map((item) => (
+          {displayInfrastructure?.map((item) => (
             <div
               key={item.id}
               className="p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer"
@@ -374,7 +374,7 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                             ? new Date(
                                 item.lifecycle.endOfSupport
                               ).getFullYear()
-                            : "Unknown"}
+                            : "Not Published"}
                         </span>
                       </div>
                     </div>
@@ -629,7 +629,9 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                     <SelectContent>
                       <SelectItem value="secure">Secure</SelectItem>
                       <SelectItem value="vulnerable">Vulnerable</SelectItem>
-                      <SelectItem value="unknown">Unknown</SelectItem>
+                      <SelectItem value="Not Published">
+                        Not Published
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -652,7 +654,9 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                       <SelectItem value="non-compliant">
                         Non-Compliant
                       </SelectItem>
-                      <SelectItem value="unknown">Unknown</SelectItem>
+                      <SelectItem value="Not Published">
+                        Not Published
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -711,7 +715,7 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                         Type:
                       </span>
                       <Badge variant="secondary" className="ml-2 capitalize">
-                        {selectedInfrastructure.type}
+                        {selectedInfrastructure?.type}
                       </Badge>
                     </div>
                     <div>
@@ -796,7 +800,7 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                           ? new Date(
                               selectedInfrastructure.lifecycle.generalAvailability
                             ).toLocaleDateString()
-                          : "Unknown"}
+                          : "Not Published"}
                       </p>
                     </div>
                   </Card>
@@ -811,7 +815,7 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                           ? new Date(
                               selectedInfrastructure.lifecycle.endOfSupport
                             ).toLocaleDateString()
-                          : "Unknown"}
+                          : "Not Published"}
                       </p>
                     </div>
                   </Card>
@@ -826,7 +830,7 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                           ? new Date(
                               selectedInfrastructure.lifecycle.endOfLife
                             ).toLocaleDateString()
-                          : "Unknown"}
+                          : "Not Published"}
                       </p>
                     </div>
                   </Card>
@@ -874,7 +878,7 @@ export const InfrastructureLibraryPanel = ({ infrastructure = [] }) => {
                             ? new Date(
                                 item.lifecycle.endOfSupport
                               ).getFullYear()
-                            : "Unknown"}
+                            : "Not Published"}
                         </span>
                       </div>
                     </div>
