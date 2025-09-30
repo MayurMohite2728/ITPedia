@@ -109,7 +109,7 @@ export const syncAllProduct = async () => {
 
 export const getBulkSyncProduct = async () => {
   try {
-    const response = await fetch(`/api/v1/repo-itpedia/bulk-sync`, {
+    const response = await fetch(`/repo-itpedia/bulkSync`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

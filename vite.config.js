@@ -53,11 +53,11 @@ export default defineConfig(({ mode }) => ({
     port: 8081,
     proxy: {
       // Specific Bulk Sync API → hit 8085
-      "/api/v1/repo-itpedia/bulk-sync": {
+      "/repo-itpedia/bulkSync": {
         target: "http://127.0.0.1:8085",
         changeOrigin: true,
         secure: false,
-        rewrite: (path) => path.replace(/^\/api\/v1/, ""), // remove /api/v1 for backend
+        rewrite: (path) => path,// remove /api/v1 for backend
         configure: (proxy) => {
           proxy.on("proxyReq", (req) =>
             console.log("[Proxy-8085] Requesting:", req.method, req.path)

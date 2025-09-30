@@ -108,20 +108,21 @@ export const GoldenLibraryPanel = () => {
 
   const loadingBarRef = useRef(null);
 
+  // Fetch the project list when the component mounts
+  const goldenLibraryPanelSummery = async () => {
+    try {
+      loadingBarRef?.current.continuousStart(); // Start loading bar
+      const data = await getProductSummaryGoldenLibrary(); // Call the API to get the project list
+      console.log(data);
+      setLibraryList(data.data.librarylist);
+    } catch (error) {
+      setError(error.message); // Handle error if API call fails
+    } finally {
+      loadingBarRef?.current.complete(); // Finish loading bar
+    }
+  };
+
   useEffect(() => {
-    // Fetch the project list when the component mounts
-    const goldenLibraryPanelSummery = async () => {
-      try {
-        loadingBarRef?.current.continuousStart(); // Start loading bar
-        const data = await getProductSummaryGoldenLibrary(); // Call the API to get the project list
-        console.log(data);
-        setLibraryList(data.data.librarylist);
-      } catch (error) {
-        setError(error.message); // Handle error if API call fails
-      } finally {
-        loadingBarRef?.current.complete(); // Finish loading bar
-      }
-    };
     goldenLibraryPanelSummery(); // Call the function to fetch data
   }, []);
 
@@ -238,11 +239,13 @@ export const GoldenLibraryPanel = () => {
     setIsSyncingAll(true);
     try {
       await syncAllProduct();
+      await getBulkSyncProduct();
+      await goldenLibraryPanelSummery();
+
       toast({
         title: "Sync Complete",
         description: "All products have been synchronized with IT-Pedia.",
       });
-      await getBulkSyncProduct();
     } catch (error) {
       toast({
         title: "Sync Failed",
