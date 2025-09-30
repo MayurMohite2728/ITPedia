@@ -28,6 +28,8 @@ import {
   getProductSummaryGoldenLibrary,
   getProductSummaryStatus,
   getProductSummaryRiskCount,
+  syncAllProduct,
+  getBulkSyncProduct,
 } from "../services/ServiceAPI";
 
 import {
@@ -160,6 +162,22 @@ export const GoldenLibraryPanel = () => {
     getProductRiskCount();
   }, []);
 
+  //  sync all Product
+
+  // const getSyncAllProduct = async () => {
+  //   try {
+  //     loadingBarRef?.current.continuousStart();
+  //     const syncData = await syncAllProduct();
+
+  //     console.log(syncData);
+
+  //   } catch (error) {
+  //     setError(error);
+  //   } finally {
+  //     loadingBarRef?.current.complete(); // Finish loading bar
+  //   }
+  // };
+
   const displayProducts = libraryList.length > 0 ? libraryList.length : "none";
 
   // const displayProductsapi =
@@ -219,11 +237,12 @@ export const GoldenLibraryPanel = () => {
   const handleSyncAll = async () => {
     setIsSyncingAll(true);
     try {
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await syncAllProduct();
       toast({
         title: "Sync Complete",
         description: "All products have been synchronized with IT-Pedia.",
       });
+      await getBulkSyncProduct();
     } catch (error) {
       toast({
         title: "Sync Failed",

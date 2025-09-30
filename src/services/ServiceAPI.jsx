@@ -88,15 +88,33 @@ export const getlifeCycle = async () => {
 
 export const syncAllProduct = async () => {
   try {
-    const response = await fetch(
-      `https://localhost:8085/itportitepediaservice/api/api/v1/repo-itpedia/products/sync`,
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const response = await fetch(`/abacus/syncAll`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching product summary status:", error);
+    throw error;
+  }
+};
+
+export const getBulkSyncProduct = async () => {
+  try {
+    const response = await fetch(`/api/v1/repo-itpedia/bulk-sync`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
