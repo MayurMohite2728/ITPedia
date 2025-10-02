@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { NavigationLayout } from "@/components/NavigationLayout";
 import { ApplicationCard } from "@/components/ApplicationCard";
 import { IntegrationStatus } from "@/components/IntegrationStatus";
@@ -8,6 +8,7 @@ import { GoldenLibraryPanel } from "@/components/GoldenLibraryPanel";
 import { InfrastructureLibraryPanel } from "@/components/InfrastructureLibraryPanel";
 import IntegrationConfiguration from "@/components/IntegrationConfiguration";
 import { Card } from "@/components/ui/card";
+import LoadingBar from "react-top-loading-bar";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -48,18 +49,20 @@ const Index = () => {
 
   const [lifeCycle, setLifecycle] = useState("");
 
+  const loadingBarRef = useRef(null);
+
   useEffect(() => {
     // Fetch the project list when the component mounts
     const goldenLibraryPanelSummery = async () => {
       try {
-        // loadingBarRef?.current.continuousStart(); // Start loading bar
+        loadingBarRef?.current.continuousStart(); // Start loading bar
         const data = await getProductSummaryGoldenLibrary(); // Call the API to get the project list
         console.log(data);
         setLibraryList(data.data.librarylist);
       } catch (error) {
         setError(error.message); // Handle error if API call fails
       } finally {
-        // loadingBarRef?.current.complete(); // Finish loading bar
+        loadingBarRef?.current.complete(); // Finish loading bar
       }
     };
     goldenLibraryPanelSummery(); // Call the function to fetch data
@@ -68,7 +71,7 @@ const Index = () => {
   useEffect(() => {
     const getProductSummary = async () => {
       try {
-        // loadingBarRef?.current.continuousStart();
+        loadingBarRef?.current.continuousStart();
         const summeryStatus = await getProductSummaryStatus();
 
         console.log(summeryStatus);
@@ -77,7 +80,7 @@ const Index = () => {
       } catch (error) {
         setError(error.message);
       } finally {
-        // loadingBarRef?.current.complete(); // Finish loading bar
+        loadingBarRef?.current.complete(); // Finish loading bar
       }
     };
 
@@ -87,7 +90,7 @@ const Index = () => {
   useEffect(() => {
     const getProductRiskCount = async () => {
       try {
-        // loadingBarRef?.current.continuousStart();
+        loadingBarRef?.current.continuousStart();
         const riskCountData = await getProductSummaryRiskCount();
 
         console.log(riskCountData);
@@ -96,7 +99,7 @@ const Index = () => {
       } catch (error) {
         setError(error);
       } finally {
-        // loadingBarRef?.current.complete(); // Finish loading bar
+        loadingBarRef?.current.complete(); // Finish loading bar
       }
     };
     getProductRiskCount();
@@ -106,7 +109,7 @@ const Index = () => {
   useEffect(() => {
     const getLifeCycle = async () => {
       try {
-        // loadingBarRef?.current.continuousStart();
+        loadingBarRef?.current.continuousStart();
         const lifeCycle = await getlifeCycle();
 
         console.log(lifeCycle);
@@ -115,7 +118,7 @@ const Index = () => {
       } catch (error) {
         setError(error);
       } finally {
-        // loadingBarRef?.current.complete(); // Finish loading bar
+        loadingBarRef?.current.complete(); // Finish loading bar
       }
     };
     getLifeCycle();
@@ -235,6 +238,7 @@ const Index = () => {
 
   const renderDashboard = () => (
     <div className="space-y-6">
+      <LoadingBar color="#f11946" ref={loadingBarRef} />
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {dashboardStats.map((stat) => {
