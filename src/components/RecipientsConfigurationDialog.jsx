@@ -383,7 +383,7 @@ export const RecipientsConfigurationDialog = ({
                   </Select>
                 </div>
 
-                <div>
+                {/* <div>
                   <Label className="mb-2 block">Notification Types</Label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                     {notificationTypeOptions.map((option) => (
@@ -421,7 +421,7 @@ export const RecipientsConfigurationDialog = ({
                       </div>
                     ))}
                   </div>
-                </div>
+                </div> */}
 
                 <div className="flex items-center gap-2 pt-2">
                   <Button onClick={handleAddRecipient}>
@@ -529,7 +529,7 @@ export const RecipientsConfigurationDialog = ({
           </div>
 
           {/* Global Notification Settings */}
-          <Card className="p-4">
+          {/* <Card className="p-4">
             <h4 className="font-medium mb-4">Global Notification Settings</h4>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
@@ -564,7 +564,7 @@ export const RecipientsConfigurationDialog = ({
                 <Switch />
               </div>
             </div>
-          </Card>
+          </Card> */}
         </div>
 
         {/* Actions */}

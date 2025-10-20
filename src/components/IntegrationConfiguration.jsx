@@ -635,9 +635,41 @@ const IntegrationConfiguration = () => {
   };
 
   // Handle CSV upload
-  const handleCsvUpload = (file) => {
+  // const handleCsvUpload = (file) => {
+  //   const reader = new FileReader();
+  //   reader.onload = (e) => {
+  //     const text = e.target.result;
+  //     const lines = text.split("\n").filter((line) => line.trim());
+  //     const headers = lines[0].split(",").map((h) => h.trim());
+  //     const data = lines.slice(1).map((line) => {
+  //       const values = line.split(",").map((v) => v.trim());
+  //       const row = {};
+  //       headers.forEach((header, index) => {
+  //         row[header] = values[index] || "";
+  //       });
+  //       return row;
+  //     });
+  //     setCsvPreview(data.slice(0, 5));
+  //     setEditingConfig((prev) =>
+  //       prev
+  //         ? {
+  //             ...prev,
+  //             csvFile: file,
+  //             csvData: data,
+  //             status: "connected",
+  //           }
+  //         : null
+  //     );
+
+  //   };
+
+  //   reader.readAsText(file);
+  // };
+
+  const handleCsvUpload = async (file) => {
     const reader = new FileReader();
-    reader.onload = (e) => {
+
+    reader.onload = async (e) => {
       const text = e.target.result;
       const lines = text.split("\n").filter((line) => line.trim());
       const headers = lines[0].split(",").map((h) => h.trim());
@@ -649,18 +681,52 @@ const IntegrationConfiguration = () => {
         });
         return row;
       });
+
+      // Show preview
       setCsvPreview(data.slice(0, 5));
+
+      // Update config state
       setEditingConfig((prev) =>
         prev
           ? {
               ...prev,
               csvFile: file,
               csvData: data,
-              status: "connected",
+              status: "uploading",
             }
           : null
       );
+
+      // 🔹 Send the data to your backend
+      try {
+        const response = await fetch("/api/import/csv", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ filename: file.name, data }),
+        });
+
+        if (!response.ok) throw new Error("Upload failed");
+
+        toast({
+          title: "CSV Imported Successfully",
+          description: `${file.name} has been uploaded and processed.`,
+        });
+
+        setEditingConfig((prev) =>
+          prev ? { ...prev, status: "connected" } : null
+        );
+      } catch (error) {
+        toast({
+          title: "Upload Failed",
+          description: "Could not send CSV data to the API.",
+          variant: "destructive",
+        });
+        setEditingConfig((prev) =>
+          prev ? { ...prev, status: "error" } : null
+        );
+      }
     };
+
     reader.readAsText(file);
   };
 

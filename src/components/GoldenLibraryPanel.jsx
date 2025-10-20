@@ -114,7 +114,7 @@ export const GoldenLibraryPanel = () => {
       loadingBarRef?.current.continuousStart(); // Start loading bar
       const data = await getProductSummaryGoldenLibrary(); // Call the API to get the project list
       console.log(data);
-      setLibraryList(data.data.librarylist);
+      setLibraryList(data?.data.librarylist);
     } catch (error) {
       setError(error.message); // Handle error if API call fails
     } finally {
@@ -134,7 +134,7 @@ export const GoldenLibraryPanel = () => {
 
         console.log(summeryStatus);
 
-        setSummery(summeryStatus.products);
+        setSummery(summeryStatus?.products);
       } catch (error) {
         setError(error.message);
       } finally {
@@ -153,7 +153,7 @@ export const GoldenLibraryPanel = () => {
 
         console.log(riskCountData);
 
-        setRiskCount(riskCountData.risk);
+        setRiskCount(riskCountData?.risk);
       } catch (error) {
         setError(error);
       } finally {
@@ -179,7 +179,7 @@ export const GoldenLibraryPanel = () => {
   //   }
   // };
 
-  const displayProducts = libraryList.length > 0 ? libraryList.length : "none";
+  const displayProducts = libraryList?.length > 0 ? libraryList.length : "none";
 
   // const displayProductsapi =
   //   libraryList.length > 0 ? libraryList : libraryList.length;
