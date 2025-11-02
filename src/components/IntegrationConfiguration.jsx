@@ -697,7 +697,7 @@ const IntegrationConfiguration = () => {
           : null
       );
 
-      // 🔹 Send the data to your backend
+      //  Send the data to your backend
       try {
         const response = await fetch("/api/import/csv", {
           method: "POST",
