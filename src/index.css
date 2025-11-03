@@ -116,5 +116,14 @@ button.text-destructive {
 }
 
 } 
+ 
 
+[data-radix-popper-content-wrapper] > div {
+  background-color: rgb(var(--background, 255 255 255)) !important;
+  color: rgb(var(--foreground, 0 0 0)) !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 0.5rem !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+  z-index: 9999 !important;
+}
 

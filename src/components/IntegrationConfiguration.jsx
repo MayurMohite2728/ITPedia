@@ -769,7 +769,7 @@ const IntegrationConfiguration = () => {
               <SelectTrigger className="w-full">
                 <SelectValue placeholder="Choose integration..." />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="bg-white text-gray-900 shadow-lg border border-gray-200 z-50">
                 {(config.type === "ea-tool" ? eaTools : providers).map(
                   (item) => (
                     <SelectItem key={item.value} value={item.value}>
@@ -873,7 +873,7 @@ const IntegrationConfiguration = () => {
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
+                <SelectContent className="bg-white text-gray-900 shadow-lg border border-gray-200 z-50">
                   <SelectItem value="api-key">API Key</SelectItem>
                   <SelectItem value="basic">Basic Authentication</SelectItem>
                   <SelectItem value="oauth">OAuth 2.0</SelectItem>
